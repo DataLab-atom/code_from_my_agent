@@ -63,6 +63,13 @@ def order_parameter(theta):
     return np.abs(mean), np.angle(mean)
 
 
+def order_parameter_k(theta, k=1):
+    """第 k 阶序参量 r_k = |1/N Σ e^{ikθᵢ}|"""
+    N = len(theta)
+    mean = np.sum(np.exp(1j * k * theta)) / N
+    return np.abs(mean), np.angle(mean)
+
+
 class KuramotoHigherOrder:
     """高阶Kuramoto振荡器系统"""
 
