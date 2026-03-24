@@ -59,8 +59,8 @@ def oa_Kc(Delta):
 
 
 def gaussian_Delta(sigma):
-    """Gaussian 频率分布的等效 Δ"""
-    return sigma * np.sqrt(np.pi / 2)
+    """Gaussian 频率分布的等效 Δ = σ√(2π)/π (matching Kc = 2/(πg(0)))"""
+    return sigma * np.sqrt(2 * np.pi) / np.pi
 
 
 def scan_oa_vs_numerical(K2_range, K3_range, sigma=1.0, N=200, T=100.0):
