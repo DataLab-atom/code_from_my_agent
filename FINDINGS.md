@@ -52,6 +52,28 @@ A: **Topology matters.** All-to-all (our setting, Wang 2025) → K₃>0 always h
 **Q: Why does OA predict the wrong direction?**
 A: OA assumes continuous density and Z₂=Z₁². Neither holds for Gaussian. The finite-N "locked population expansion" mechanism is invisible to any continuous theory.
 
+**Q: Does topology matter?**
+A: YES, critically. K₃ has ZERO effect on sparse networks (p=0.1, 0.3). Triangle density ~ p³ determines K₃ efficacy. This is a FOURTH source of literature contradiction (beyond the three measurement differences).
+
+## Corrected Self-Consistent Equation (MathAgent)
+
+For Gaussian: Z₂/Z₁² = 2/π ≈ 0.637 (not 1 as OA assumes).
+Corrected equation correctly predicts r≈0 at K₂=1.0,K₃=2.0 (verified), while uncorrected OA predicts r≈0.875.
+
+## r Distribution Near Kc (σ=1.2, K₂≈0.98Kc)
+
+- Unimodal distribution, no bistability
+- K₃=0.4 increases <r> by ~10% at all N (200-1000)
+- r overall decreases with N, approaching OA prediction
+- N=1000: 0/50 seeds reach high sync state near Kc
+
+## Computation Resources
+
+- CPU: ~8 hours total (numba-optimized O(N) code)
+- GPU: ~1 hour (CuPy, 2×A800 for large-N scaling)
+- Total simulations: ~50,000+
+- Largest N: 20,000 (GPU)
+
 ## Data Files (branch: sim/parameter-scan)
 
 | File | Description |
