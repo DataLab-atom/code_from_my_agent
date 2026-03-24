@@ -1,0 +1,92 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[utf8]{inputenc}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Kc}{K_{\mathrm{c}}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+\title{Distribution-Dependent Explosive Boundary: A Universal Formula}
+\author{HaibiMathAgent}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\begin{theorem}[Universal explosive synchronization threshold]
+\label{thm:universal-explosive}
+  For the higher-order Kuramoto model with arbitrary unimodal symmetric
+  frequency distribution $g(\omega)$, the synchronization transition changes
+  from supercritical (continuous) to subcritical (explosive/discontinuous)
+  at the critical three-body coupling:
+  \begin{equation}
+    \boxed{
+    K_3^{\mathrm{exp}} = \frac{\Kc^3\,|g''(0)|}{8\,g(0)}
+    }
+    \label{eq:K3-explosive-universal}
+  \end{equation}
+  where $\Kc = 2/[\pi g(0)]$ is the onset critical coupling.
+
+  Equivalently, in terms of the curvature-to-height ratio
+  $\kappa \coloneqq |g''(0)|/g(0)$:
+  \begin{equation}
+    K_3^{\mathrm{exp}} = \frac{\kappa}{(\pi g(0))^2}.
+  \end{equation}
+\end{theorem}
+
+\begin{proof}
+  The self-consistent equation for the order parameter $r$ with effective
+  coupling $K_{\mathrm{eff}}(r) = K_2 + K_3 r^2$ is:
+  \[
+    1 = K_{\mathrm{eff}} \int_{-\pi/2}^{\pi/2}
+    \cos^2\theta\, g(K_{\mathrm{eff}}\, r\sin\theta)\,\dd\theta.
+  \]
+
+  Expanding $g(x) = g(0) + g''(0)x^2/2 + \mathcal{O}(x^4)$ and using
+  $\int_{-\pi/2}^{\pi/2}\cos^2\theta\,\dd\theta = \pi/2$,
+  $\int_{-\pi/2}^{\pi/2}\cos^2\theta\sin^2\theta\,\dd\theta = \pi/8$:
+
+  \begin{align}
+    F(r) &= (K_2+K_3 r^2)\,r\left[
+      g(0)\frac{\pi}{2} + g''(0)\frac{(K_2 r)^2 \pi}{16} + \cdots
+    \right] - r \notag\\
+    &= r\underbrace{\left(\frac{K_2\pi g(0)}{2} - 1\right)}_{\to 0\text{ at onset}}
+    + r^3\left[\frac{K_3\pi g(0)}{2} + \frac{K_2^3\pi g''(0)}{16}\right]
+    + \mathcal{O}(r^5).
+  \end{align}
+
+  At $K_2 = \Kc$, the linear term vanishes. The cubic coefficient is:
+  \[
+    c_3 = \frac{K_3\pi g(0)}{2} + \frac{\Kc^3\pi g''(0)}{16}.
+  \]
+
+  The bifurcation is subcritical (explosive) when $c_3 > 0$, i.e.,
+  \[
+    K_3 > -\frac{\Kc^3 g''(0)}{8 g(0)} = \frac{\Kc^3 |g''(0)|}{8 g(0)},
+  \]
+  since $g''(0) < 0$ for any unimodal distribution.
+\end{proof}
+
+\section*{Applications}
+
+\begin{tabular}{llll}
+  \textbf{Distribution} & $g''(0)/g(0)$ & $K_3^{\mathrm{exp}}/\Kc$ & \textbf{Resistance} \\
+  \hline
+  Lorentzian & $-\pi/\sigma^2$ & $1$ & High (needs $K_3=K_2$) \\
+  Gaussian & $-1/\sigma^2$ & $1/\pi \approx 0.318$ & Low (explosive at $K_3 \ll K_2$) \\
+  Uniform$[-a,a]$ & $0$ & $0$ & None (always explosive for $K_3>0$) \\
+\end{tabular}
+
+\begin{corollary}[Tail heaviness controls explosive resistance]
+  Heavier-tailed distributions (larger $|g''(0)|/g(0)$) require larger
+  $K_3$ to trigger explosive synchronization. Lorentzian is $\pi$ times
+  more resistant than Gaussian, and uniform distributions have zero
+  resistance (any $K_3>0$ makes the transition discontinuous).
+
+  Physical mechanism: heavy tails ensure a reservoir of high-frequency
+  oscillators that cannot be entrained, buffering the positive-feedback
+  avalanche of three-body cooperative coupling.
+\end{corollary}
+
+\end{document}
