@@ -56,12 +56,25 @@ $Z_2 = Z_1^2$, which holds \emph{exactly} on the Ott--Antonsen manifold
   $Z_2^{\mathrm{drift}} = -\tfrac{2}{3}\,h\,g(0)$,
   giving \emph{exact cancellation}: $Z_2 = \mathcal{O}(h^2)$.
 
-  The $\mathcal{O}(h^2)$ coefficient (which determines $c$) involves
-  the integral $\int_1^\infty u^2 (u - \sqrt{u^2-1})^2\,g(hu)\,\dd u$,
-  which diverges if $g(hu)$ is replaced by $g(0)$. Thus $c$ depends on
-  the \emph{global} decay of $g$, not on finitely many derivatives at
-  the origin. Numerical computation confirms the values in the table
-  to $>5$ significant digits.
+  The $\mathcal{O}(h^2)$ coefficient (which determines $c$) comes from
+  the drift correction.  With $v = hu/\sigma$ (for Gaussian) or the
+  natural scale of~$g$, the correction reduces to
+  \[
+    \Delta Z_2^{\mathrm{drift}}
+    = \frac{h}{2}\int_0^\infty
+      \frac{1 - g(\omega)/g(0)}{\omega^2}\,\dd\omega + R(h),
+  \]
+  where the remainder $R(h) = \mathcal{O}(h^2)$ is controlled by the
+  bound $|(u-\sqrt{u^2-1})^2 - 1/(4u^2)| \le 1/(4u^2(4u^2-2))$ for
+  $u\ge 1$, which after integration contributes at most
+  $\mathcal{O}(h^2)$ relative to the $\mathcal{O}(h)$ leading term.
+
+  Combining with $Z_1^2 = h^2 g(0)^2\pi^2/4 + \mathcal{O}(h^3)$
+  yields~\eqref{eq:closure-ratio}.  For Gaussian, the integral
+  evaluates via $\int_0^\infty(1-\ee^{-v^2})/v^2\,\dd v = \sqrt\pi$
+  (proved by differentiating under the integral sign) to give
+  $c = 2/\pi$.  For Lorentzian, $\int_0^\infty 1/(1+v^2)\,\dd v
+  = \pi/2$ gives $c=1$.
 \end{proof}
 
 \begin{theorem}[Corrected universal explosive synchronization threshold]
