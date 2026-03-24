@@ -76,10 +76,23 @@ The four contradictory studies measure different projections of the radial poten
 ### 7.6 Hysteresis detection (task G.1) — PENDING
 ### 7.7 Reentrant sync verification (task R.1) — PENDING
 
-## 8. Discussion
-- Practical implications: neural synchronization, epilepsy early warning
-- Critical slowing down vs explosive sync (task N.1 — PENDING)
+## 8. Critical Slowing Down: A Surprise (task N.1 — DONE)
+- K₃>0 ENHANCES critical slowing: τ_max from 12s (K₃=0) to 48.5s (K₃=1.5)
+- **Theoretical explanation (KuramotoThinker analysis)**:
+  - Linear: λ = K₂/2 − Δ, independent of K₃ → linear τ_relax unchanged
+  - But K₃ modifies the NONLINEAR landscape → system gets "stuck" at intermediate r
+  - This is a purely nonlinear critical slowing, not classical linear CSD
+  - Implication: K₃ doesn't change WHEN the transition happens, but HOW LONG the system hesitates
+- Practical significance: higher-order coupling makes phase transitions MORE predictable (stronger precursors), not less → epilepsy early warning
+
+## 9. Hysteresis (task G.1 — DONE)
+- All K₃ values show hysteresis (area > 0.1)
+- K₃=+1.5 has largest area (0.178) → approaching first-order transition
+- Validates OA prediction: K₃>K₂ → subcritical bifurcation
+
+## 10. Discussion
 - Budget-constrained optimal allocation (task E.1 — PENDING)
+- Frequency distribution robustness (task O.1 — PENDING)
 
 ## 9. Conclusion
 
