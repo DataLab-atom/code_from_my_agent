@@ -107,7 +107,14 @@ OA linearizes away the very region where K₃ matters most.
 Analogy: K₃ doesn't change WHEN you start rolling downhill (onset), but it
 changes HOW DEEP the valley is and HOW WIDE the pass is to get there.
 
-### 8. Open questions
+### 8. What we DON'T know (honest limitations)
+
+1. **Topology hypothesis UNVERIFIED**: "K₃ effect flips on sparse networks" is GPU's conjecture, not tested. Sparse network simulation task sent but unexecuted.
+2. **N→∞ true limit unknown**: N=5000 data shows K₃ still helps, but Gaussian exact (true N→∞) also shows it helps. Lorentzian OA (also N→∞) says it hurts. Which N→∞ is "real" depends on distribution.
+3. **K₄ truncation**: Four-body term is 45-75% of K₃. Our model ignores it. Conclusions may change with K₄.
+4. **Only Gaussian/Lorentzian/Uniform tested**: Other distributions (bimodal, power-law) untested.
+
+### 9. Open questions
 2. **K₄ truncation**: Four-body term is 45-75% of K₃ effect. Is the K₃-only model self-consistent?
 3. **Large K₃ regime**: Zhang 2024's basin shrinkage might occur at K₃ > 2 (beyond our scan range).
 4. **N→∞ true limit**: Need N=1000+ to distinguish finite-size from true thermodynamic behavior.
