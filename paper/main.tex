@@ -89,7 +89,8 @@ with $r=0$ indicating incoherence and $r=1$ full phase locking.
 
 For a Gaussian frequency distribution $g(\omega)=\frac{1}{\sqrt{2\pi}\sigma}
 \exp\!\bigl(-\frac{\omega^2}{2\sigma^2}\bigr)$, the critical coupling is
-$\Kc = 2/[\pi g(0)] = 2\sqrt{2\pi}\,\sigma$~\citep{Kuramoto1984}.  Above
+$\Kc = \frac{2}{\pi g(0)} = \frac{2\sigma\sqrt{2\pi}}{\pi}
+\approx 1.596\,\sigma$~\citep{Kuramoto1984}.  Above
 $\Kc$, the order parameter grows as $r\sim\sqrt{K-\Kc}$.
 
 Recent years have witnessed intense interest in \emph{higher-order
@@ -259,11 +260,18 @@ This is our central analytical result.  Despite the higher-order interaction,
 the Ott--Antonsen reduction produces a \emph{one-dimensional} ODE for the order
 parameter $r$, making the complete bifurcation analysis tractable.
 
-\begin{remark}
-  For Gaussian $g(\omega)$ with standard deviation $\sigma$, the Lorentzian
-  approximation uses $\Delta = \sigma\sqrt{\pi/2}$, which matches the critical
-  coupling $\Kc=2\Delta$ to within $<2\%$ for the classical
-  model~\citep{OttAntonsen2008}.
+\begin{remark}[Lorentzian vs.\ Gaussian]
+  The Ott--Antonsen reduction is exact for Lorentzian $g(\omega)$ with
+  half-width $\Delta$, giving $\Kc=2\Delta$.  For Gaussian $g(\omega)$ with
+  standard deviation $\sigma$, the exact critical coupling is
+  $\Kc = 2\sigma\sqrt{2\pi}/\pi \approx 1.596\,\sigma$
+  (from $\Kc=2/[\pi g(0)]$ with $g(0)=1/(\sigma\sqrt{2\pi})$).
+  Matching $g_{\mathrm{Lor}}(0) = g_{\mathrm{Gauss}}(0)$ gives
+  $\Delta = \sigma\sqrt{2\pi}/\pi \approx 0.798\,\sigma$.
+  With this identification, the onset prediction $\Kc=2\Delta$ is exact for
+  both distributions.  Higher-order (nonlinear) predictions from
+  \eqref{eq:r-dynamics} are exact for the Lorentzian and approximate for the
+  Gaussian~\citep{OttAntonsen2008}.
 \end{remark}
 
 
