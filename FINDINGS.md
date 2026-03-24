@@ -3,7 +3,7 @@
 ## Core Discovery: OA-Numerics Direction Reversal
 
 **OA predicts**: K₃>0 decreases steady-state r* (narrower locking region)
-**Numerics show**: K₃>0 increases r at all N=20-500 (more oscillators lock)
+**Numerics show**: K₃>0 increases r at all N=20-5000 (more oscillators lock)
 
 **Mechanism**: K₃>0 enhances synchronization at finite N by **expanding the frequency-locked population**, not by deepening individual oscillator confinement. The three-body term creates a "winner-takes-all" effect: already-synchronized clusters exert stronger pull on outliers. This is invisible to OA, which assumes continuous density.
 
@@ -26,6 +26,14 @@ Evidence:
 
 6. **No re-entrant sync** (MathAgent's initial prediction was a code bug).
 
+7. **Z₂/Z₁² = 2/π for Gaussian** (MathAgent analytical + our numerics): OA manifold Z₂=Z₁² fails. Ratio ranges 0.37-0.97, only approaches 1 when r>0.96. This means effective K₃ coupling is reduced by factor 2/π ≈ 0.64.
+
+8. **GPU large-N scaling (N=200-5000)**: K₃>0 enhancement persists to N=5000. r(K₃=0) slowly decreases toward OA prediction, but the K₃ enhancement gap WIDENS. No direction reversal.
+
+9. **Non-monotonic hysteresis**: Area has minimum at K₃≈1.03, then rises to 0.64 at K₃=3. The dip corresponds to OA subcritical boundary K₃≈K₂.
+
+10. **No anti-phase clusters**: Even at K₃=-5, frequency heterogeneity (σ=1) prevents clean bifurcation into two phase-locked clusters.
+
 ## Data Files (branch: sim/parameter-scan)
 
 | File | Description |
@@ -47,3 +55,8 @@ Evidence:
 | pseudopotential_analysis.json | OA potential landscape |
 | Kc_consistency.json | Kc seed variance |
 | verify_oa_results.json | OA vs numerics comparison |
+| quick_scan.json | Coarse 3D scan for fast plotting |
+| finite_size_large_N.json | GPU N=200-5000 scaling |
+| Z2_Z1_ratio.json | OA manifold Z₂/Z₁² test |
+| hysteresis_fine.json | Fine K₃ hysteresis scan |
+| anti_phase_test.json | Anti-phase cluster test |
