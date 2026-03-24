@@ -1,6 +1,10 @@
 """
 高阶Kuramoto模型
 dθᵢ/dt = ωᵢ + (K₂/N) Σⱼ sin(θⱼ−θᵢ) + (K₃/N²) ΣⱼΣₖ sin(2θⱼ−θₖ−θᵢ)
+
+优化版：三体项通过均场分解从 O(N³) 降至 O(N)
+sin(2θⱼ−θₖ−θᵢ) = sin(2θⱼ)cos(θₖ+θᵢ) − cos(2θⱼ)sin(θₖ+θᵢ)
+预计算全局和 S₂,C₂,S₁,C₁ 后，每个振荡器仅需 O(1) 计算三体贡献
 """
 
 import numpy as np
@@ -9,21 +13,34 @@ from numba import njit, prange
 
 @njit
 def dtheta(theta, omega, K2, K3, N):
-    """计算每个振荡器的相位导数"""
+    """计算每个振荡器的相位导数（优化版 O(N)）"""
+    # 预计算全局均场量
+    S1 = 0.0  # Σ sin(θⱼ)
+    C1 = 0.0  # Σ cos(θⱼ)
+    S2 = 0.0  # Σ sin(2θⱼ)
+    C2 = 0.0  # Σ cos(2θⱼ)
+    for j in range(N):
+        S1 += np.sin(theta[j])
+        C1 += np.cos(theta[j])
+        S2 += np.sin(2.0 * theta[j])
+        C2 += np.cos(2.0 * theta[j])
+
     dtheta_dt = np.empty(N)
     for i in range(N):
-        # 两两耦合项
-        pair = 0.0
-        for j in range(N):
-            pair += np.sin(theta[j] - theta[i])
-        pair = (K2 / N) * pair
+        si = np.sin(theta[i])
+        ci = np.cos(theta[i])
 
-        # 三体耦合项: sin(2θⱼ − θₖ − θᵢ)
-        triplet = 0.0
-        for j in range(N):
-            for k in range(N):
-                triplet += np.sin(2.0 * theta[j] - theta[k] - theta[i])
-        triplet = (K3 / (N * N)) * triplet
+        # 两两耦合项: (K₂/N) Σⱼ sin(θⱼ−θᵢ) = (K₂/N)(S1·ci − C1·si)
+        pair = (K2 / N) * (S1 * ci - C1 * si)
+
+        # 三体耦合项展开:
+        # Σⱼ Σₖ sin(2θⱼ−θₖ−θᵢ)
+        # = Σⱼ sin(2θⱼ) · Σₖ cos(θₖ+θᵢ) − Σⱼ cos(2θⱼ) · Σₖ sin(θₖ+θᵢ)
+        # Σₖ cos(θₖ+θᵢ) = C1·ci − S1·si
+        # Σₖ sin(θₖ+θᵢ) = S1·ci + C1·si
+        sum_cos_ki = C1 * ci - S1 * si
+        sum_sin_ki = S1 * ci + C1 * si
+        triplet = (K3 / (N * N)) * (S2 * sum_cos_ki - C2 * sum_sin_ki)
 
         dtheta_dt[i] = omega[i] + pair + triplet
     return dtheta_dt
@@ -94,7 +111,6 @@ class KuramotoHigherOrder:
         converge_step = steps
         for s in range(steps):
             r = self.step(dt)
-            self.r_history.append(r)
             if s > burn_steps and r > 0.9 and converge_step == steps:
                 converge_step = s
 
