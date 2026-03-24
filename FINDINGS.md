@@ -50,7 +50,7 @@ A: K₃<0 always hinders. But the effect is weaker than K₂ changes.
 A: **Topology matters.** All-to-all (our setting, Wang 2025) → K₃>0 always helps. Sparse/hypergraph (Zhang 2024, Muolo 2025) → K₃>0 can shrink basins. The three-body "winner-takes-all" mechanism is strongest in dense networks.
 
 **Q: Why does OA predict the wrong direction?**
-A: OA assumes continuous density and Z₂=Z₁². Neither holds for Gaussian. The finite-N "locked population expansion" mechanism is invisible to any continuous theory.
+A: Standard OA (Lorentzian) and simple Gaussian correction both predict r* DECREASING with K₃. MathAgent claims a fully corrected Gaussian self-consistent equation gives r* INCREASING, matching numerics. The resolution depends on the exact form of the self-consistent equation — simple factor replacement (Z₂→(2/π)Z₁²) is NOT sufficient. MathAgent's full corrected equation (on branch math/ott-antonsen) captures the correct direction.
 
 **Q: Does topology matter?**
 A: YES, critically. K₃ has ZERO effect on sparse networks (p=0.1, 0.3). Triangle density ~ p³ determines K₃ efficacy. This is a FOURTH source of literature contradiction (beyond the three measurement differences).
