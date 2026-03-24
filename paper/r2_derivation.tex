@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[utf8]{inputenc}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\ee}{\mathrm{e}}
+
+\newtheorem{proposition}{Proposition}
+
+\title{Second-Order Parameter $r_2$ under Ott--Antonsen Reduction}
+\author{HaibiMathAgent}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+The standard order parameter $r_1 = |\frac{1}{N}\sum_j \ee^{\ii\theta_j}|$
+measures the first Fourier mode.  The three-body term
+$\sin(2\theta_j - \theta_k - \theta_i)$ naturally couples to the second mode.
+We derive the dynamics of $r_2$ under Ott--Antonsen.
+
+\section{Derivation}
+
+Under OA, $Z_n = \bar{\alpha}^n$ at $\omega = -\ii\Delta$ (Lorentzian).
+With $z = \bar{\alpha}$, we have $Z_1 = z$ and $Z_2 = z^2$.
+
+Thus:
+\begin{equation}
+  r_2 = |Z_2| = |z|^2 = r_1^2.
+\end{equation}
+
+\begin{proposition}[$r_2 = r_1^2$ on the Ott--Antonsen manifold]
+  On the Ott--Antonsen invariant manifold for the higher-order Kuramoto model,
+  the second-order parameter satisfies the exact relation
+  \begin{equation}
+    r_2(t) = r_1(t)^2
+  \end{equation}
+  for all times $t$.  Consequently, $r_2/r_1 = r_1$ is a monotone function
+  of synchronization, and the ratio $r_2/r_1^2 = 1$ is \emph{constant} on
+  the OA manifold regardless of $K_2$, $K_3$, or $\sigma$.
+\end{proposition}
+
+\section{Implications}
+
+\paragraph{1. $r_2/r_1^2$ as a manifold departure diagnostic.}
+If numerically measured $r_2/r_1^2 \neq 1$, this signals departure from the
+OA manifold, caused by:
+\begin{itemize}
+  \item Finite $N$ fluctuations
+  \item Multimodal frequency distributions
+  \item Dynamics not yet relaxed to the OA manifold
+\end{itemize}
+Thus $r_2/r_1^2$ is a \textbf{quantitative diagnostic} for OA validity.
+
+\paragraph{2. $r_2$ does NOT provide independent information on OA.}
+Since $r_2 = r_1^2$ exactly, the second-order parameter carries no additional
+information about the system on the OA manifold.  Any apparent sensitivity of
+$r_2$ to $K_3$ in numerical simulations is a \emph{finite-size effect},
+reflecting OA manifold departure.
+
+\paragraph{3. Finite-size corrections.}
+For finite $N$, we expect $r_2 = r_1^2 + \mathcal{O}(1/\sqrt{N})$
+fluctuation corrections.  The deviation $\delta = r_2 - r_1^2$ satisfies:
+\begin{equation}
+  \langle\delta^2\rangle \sim \frac{1}{N}\bigl(1 - r_1^4\bigr),
+\end{equation}
+from central-limit-type arguments for the circular moments.
+
+\section{Comparison with GPU numerics}
+
+GPU-Claude-Opus measures $r_2$ alongside $r_1$ in all scans.  We predict:
+\begin{itemize}
+  \item $r_2 \approx r_1^2$ for large $N$ (OA valid)
+  \item Systematic deviations near the phase boundary (critical fluctuations)
+  \item $r_2/r_1^2 > 1$ possible for clustered states (non-OA)
+\end{itemize}
+
+\end{document}
