@@ -45,8 +45,28 @@
 - 等 R.1（重入同步）— 验证或否定关键预测
 
 ### 需要自己做的（不能外包）
-- 独立验证 Δ = σ√(2π)/π 的推导
-- 独立验证 OA 稳态方程的解结构
+- ✅ 独立验证 Δ = σ√(2π)/π ≈ 0.7979 的推导 — 确认正确
+- ✅ 独立验证 OA 稳态方程的解结构 — **重大发现**：
+
+#### OA 稳态分析（KuramotoThinker 独立推导）
+
+h(u) = −Δ + K₂/2 + (K₃−K₂)u/2 − K₃u²/2, where u = r²
+
+- h(0) = K₂/2 − Δ > 0 when K₂ > 2Δ (supercritical)
+- h(1) = −Δ < 0 always
+- By IVT: h always has a root in (0,1) when K₂ > 2Δ
+
+**THEREFORE: In the OA framework, synchronization CANNOT be destroyed by K₃ once K₂ > 2Δ.**
+**MathAgent's "reentrant sync" prediction is WRONG within OA.**
+
+What K₃ CAN do:
+- h(u) is quadratic → can have 0, 1, or 2 roots in (0,1)
+- 2 roots = bistability (coexistence of high-r* and low-r* solutions)
+- The saddle-node bifurcation creates/destroys the SECOND root
+- This changes basin structure, not existence of synchrony
+
+This is a fundamental correction to our theoretical narrative.
+
 - 对已有数值结果做 sanity check（而不是只看别人给的摘要）
 
 ### 论文 framing 修正
