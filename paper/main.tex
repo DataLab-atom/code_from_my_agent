@@ -51,11 +51,12 @@ and stability depth generically move in \emph{different directions} as $K_3$
 varies.  Second, and more fundamentally, we discover that the \emph{tail
 heaviness} of the frequency distribution qualitatively controls the phase
 diagram topology.  We derive a universal formula for the explosive
-synchronization threshold, $K_3^{\mathrm{exp}} = \Kc^3|g''(0)|/(8g(0))$,
-valid for any unimodal distribution $g(\omega)$: Lorentzian distributions
-(heavy tails) resist explosive transitions ($K_3^{\mathrm{exp}}=\Kc$), while
-Gaussian distributions are $\pi$ times more susceptible
-($K_3^{\mathrm{exp}}=\Kc/\pi$).  This explains why numerical studies using
+synchronization threshold, $K_3^{\mathrm{exp}} = \Kc^3|g''(0)|/(8\,c[g]\,g(0))$,
+where $c[g]$ is a distribution-dependent \emph{OA closure ratio} given by an
+explicit integral over~$g$.  Lorentzian distributions (heavy tails) have $c=1$
+and resist explosive transitions ($K_3^{\mathrm{exp}}=\Kc$), while Gaussian
+distributions have $c=2/\pi$ and are twice as susceptible
+($K_3^{\mathrm{exp}}=\Kc/2$).  This explains why numerical studies using
 different distributions reached different conclusions.  GPU-accelerated
 simulations ($8\times$A800, $>10^5$ configurations) confirm these predictions
 quantitatively.  We further show that $K_3$ cannot destroy synchronization
@@ -272,13 +273,16 @@ parameter $r$, making the complete bifurcation analysis tractable.
   \textbf{Important caveat}: while the onset $\Kc$ is distribution-independent
   (depending only on $g(0)$), the nonlinear predictions from
   \eqref{eq:r-dynamics}---including $r^*$ and basin boundaries---are exact
-  only for the Lorentzian.  For the Gaussian, the OA prediction
-  \emph{systematically underestimates} $r^*$ by $0.10$--$0.27$ in the
-  supercritical regime, because the heavier Lorentzian tails lock fewer
-  oscillators.  The \emph{qualitative} phase structure (onset, explosive
+  only for the Lorentzian.  The root cause is that the OA closure
+  $Z_2=Z_1^2$ fails for non-Lorentzian distributions: at onset,
+  $Z_2/Z_1^2 \to c[g]$ where $c=2/\pi\approx 0.64$ for Gaussian
+  (\Cref{thm:explosive}).  This makes the effective three-body coupling
+  weaker by a factor $c$, shifting the explosive threshold from
+  $K_3^{\mathrm{exp}}=\Kc/\pi$ to $\Kc/2$ for Gaussian.
+  The \emph{qualitative} phase structure (onset, explosive
   boundary, basin ordering) is robust across distributions, but the
-  \emph{explosive threshold} $K_3^{\mathrm{exp}}$ differs quantitatively
-  (\Cref{thm:explosive})~\citep{OttAntonsen2008}.
+  \emph{quantitative} thresholds require the correction factor~$c[g]$
+  (\Cref{thm:explosive}).
 \end{remark}
 
 
@@ -347,30 +351,54 @@ The bifurcation is:
   synchronization transition becomes subcritical (explosive) when
   \begin{equation}
     \boxed{K_3 > K_3^{\mathrm{exp}}
-      \coloneqq \frac{\Kc^3\,|g''(0)|}{8\,g(0)}.}
+      \coloneqq \frac{\Kc^3\,|g''(0)|}{8\,c[g]\,g(0)},}
     \label{eq:K3-explosive-universal}
   \end{equation}
-  For Lorentzian: $K_3^{\mathrm{exp}}=\Kc$ (the OA result $K_3=K_2$).
-  For Gaussian: $K_3^{\mathrm{exp}}=\Kc/\pi$, a factor $\pi$ lower.
-  For uniform: $K_3^{\mathrm{exp}}=0$ (any $K_3>0$ is explosive).
+  where $c[g] \coloneqq \lim_{r\to 0^+} Z_2/Z_1^2$ is the
+  \emph{OA closure ratio}, given in closed form by
+  \begin{equation}
+    c[g] = \frac{2}{\pi^2\,g(0)^2}
+      \int_0^\infty \frac{g(0)-g(\omega)}{\omega^2}\,\dd\omega.
+    \label{eq:closure-ratio}
+  \end{equation}
+  Specific values:
+  Lorentzian $c\!=\!1$, $K_3^{\mathrm{exp}}\!=\!\Kc$;\;
+  Gaussian $c\!=\!2/\pi$, $K_3^{\mathrm{exp}}\!=\!\Kc/2$;\;
+  uniform $c\!=\!4/\pi^2$, $K_3^{\mathrm{exp}}\!=\!0$.
 \end{theorem}
 
 \begin{proof}
-  The self-consistent equation near onset expands as $F(r)=c_1 r + c_3 r^3
-  + \Order(r^5)$ where $c_3 = K_3\pi g(0)/2 + \Kc^3\pi g''(0)/16$.
-  The bifurcation is subcritical when $c_3>0$, giving
-  \eqref{eq:K3-explosive-universal}.  For Lorentzian,
-  $|g''(0)|/g(0)=\pi/\sigma^2$, recovering the OA result $K_3^{\mathrm{exp}}
-  =\Kc$.  The normal form \eqref{eq:cubic-normal} is the special case for
-  Lorentzian where $c_3=-\frac{1}{2}(K_2-K_3)$.
+  The three-body mean field is $H = K_2 Z_1 + K_3 Z_2\bar{Z}_1$.  Near onset,
+  the stationary locked+drifting distribution gives $Z_2 = c[g]\,r^2 +
+  \Order(r^4)$, so $H = (K_2 + K_3\,c[g]\,r^2)\,r + \Order(r^5)$.  The
+  self-consistent equation then expands as $F(r) = c_1 r + c_3 r^3 +
+  \Order(r^5)$ with
+  \[
+    c_3 = \frac{K_3\,c[g]\,\pi\,g(0)}{2}
+          + \frac{\Kc^3\,\pi\,g''(0)}{16}.
+  \]
+  The bifurcation is subcritical when $c_3 > 0$, giving
+  \eqref{eq:K3-explosive-universal}.  The closure ratio $c[g]$ is
+  computed from the balance of locked and drifting contributions to~$Z_2$:
+  at $\Order(h)$ they cancel exactly ($\pm\tfrac{2}{3}hg(0)$); the
+  $\Order(h^2)$ residual depends on the tail integral
+  $\int_0^\infty (1-g(\omega)/g(0))/\omega^2\,\dd\omega$, yielding
+  \eqref{eq:closure-ratio}.  For Gaussian, this reduces to the identity
+  $\int_0^\infty (1-\ee^{-v^2})/v^2\,\dd v = \sqrt{\pi}$, giving
+  $c = 2/\pi$.  For Lorentzian, the OA manifold guarantees $Z_2=Z_1^2$
+  exactly, so $c=1$.
 \end{proof}
 
-\textbf{Physical interpretation}: heavy-tailed distributions maintain a
-reservoir of high-frequency oscillators that cannot be entrained, buffering
-the positive-feedback avalanche of cooperative three-body coupling.
-Lighter tails $\to$ weaker buffer $\to$ lower explosive threshold.
+\textbf{Physical interpretation}: the closure ratio $c[g]$ measures how
+effectively high-frequency drifting oscillators screen the three-body
+cooperative feedback.  Heavy-tailed distributions maintain a large reservoir
+of fast drifters whose contribution to $Z_2$ partially restores the OA
+closure $Z_2\!\approx\!Z_1^2$, weakening the positive-feedback avalanche.
+Lighter tails $\to$ weaker screening ($c<1$) $\to$ lower explosive threshold.
 This recovers \citet{Skardal2020}'s explosive synchronization and explains
-why it is more pronounced in Gaussian simulations.
+why it is more pronounced in Gaussian simulations: Lorentzian distributions
+are exactly $2\times$ more resistant than Gaussian (not $\pi\times$ as
+the uncorrected formula would predict).
 
 \subsection{Basin of attraction analysis}
 
@@ -684,10 +712,13 @@ time-delayed systems.
 
 \subsection{Limitations}
 
-Two analytical limitations: (1)~the explosive threshold
+Three analytical limitations: (1)~the explosive threshold
 \eqref{eq:K3-explosive-universal} is derived near onset ($K_2\approx\Kc$);
 for $K_2\gg\Kc$, the transition is smooth regardless of $K_3$, and a global
-bifurcation analysis is needed.
+bifurcation analysis is needed.  (1b)~The closure ratio $c[g]$ is computed
+in the $r\to 0$ limit; at finite~$r$, $Z_2/Z_1^2$ varies (e.g., from
+$2/\pi$ at onset to $\approx 0.8$ at $r=0.85$ for Gaussian), so the
+corrected self-consistent equation requires the full $Z_2(h)$ function.
 (2)~The three-body truncation requires $K_4 r^4/(K_3 r^2+K_2)\ll 1$;
 near the explosive boundary, four-body terms ($\sim$12\% at $N\!=\!50$) can
 matter.  The OA reduction also assumes all-to-all coupling; sparse
@@ -715,8 +746,10 @@ networks; \citet{Dai2025} found 9 transitions at $N\!=\!3$; and
 
 We provided a unified framework for higher-order Kuramoto synchronization:
 (1)~the first OA reduction yielding scalar ODE~\eqref{eq:r-dynamics};
-(2)~a universal explosive threshold $K_3^{\mathrm{exp}}\!=\!\Kc^3|g''(0)|/(8g(0))$
-showing tail heaviness controls phase transition type (\Cref{thm:explosive});
+(2)~a universal explosive threshold $K_3^{\mathrm{exp}}\!=\!\Kc^3|g''(0)|/(8\,c[g]\,g(0))$
+with an explicit OA closure ratio $c[g]$ (\Cref{thm:explosive}), showing tail
+heaviness controls phase transition type through both local curvature and global
+tail decay;
 (3)~three critical manifolds reconciling four contradictory studies;
 (4)~proof that synchronization is indestructible by $K_3$ (\Cref{prop:indestructible});
 (5)~the mapping $K_3^{\mathrm{eff}}\!=\!K_2^2\tau/4$ for time-delayed systems;
