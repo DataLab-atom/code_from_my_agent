@@ -1,0 +1,108 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[utf8]{inputenc}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\Order}{\mathcal{O}}
+
+\newtheorem{proposition}{Proposition}
+
+\title{Direction D: Noise Effects on Higher-Order Kuramoto Synchronization}
+\author{HaibiMathAgent}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\section{Noisy Higher-Order Kuramoto Model}
+
+Adding Gaussian white noise:
+\begin{equation}
+  \dd\theta_i = \Bigl[\omega_i + \frac{K_2}{N}\sum_j\sin(\theta_j-\theta_i)
+  + \frac{K_3}{N^2}\sum_{j,k}\sin(2\theta_j-\theta_k-\theta_i)\Bigr]\dd t
+  + \sqrt{2\eta}\,\dd W_i,
+\end{equation}
+where $\eta$ is the noise intensity and $W_i$ are independent Wiener processes.
+
+\section{Fokker--Planck Equation}
+
+The single-oscillator density $f(\theta,\omega,t)$ satisfies:
+\begin{equation}
+  \frac{\partial f}{\partial t}
+  + \frac{\partial}{\partial\theta}\bigl(f\,v\bigr)
+  = \eta\,\frac{\partial^2 f}{\partial\theta^2},
+\end{equation}
+where $v[\theta,\omega,t]$ is the velocity field (same as deterministic case).
+
+\section{Modified OA Reduction}
+
+The Fourier expansion remains $f = \frac{g(\omega)}{2\pi}[1 + \sum_n
+\hat{f}_n \ee^{\ii n\theta} + \text{c.c.}]$.
+
+The noise adds a diffusion term: the $n$-th mode decays as $\ee^{-n^2\eta t}$.
+On the OA manifold $\hat{f}_n = \alpha^n$, the modified evolution is:
+\begin{equation}
+  \dot{\alpha} = -(\ii\omega + \eta)\alpha
+  + \frac{1}{2}\bigl[H - \bar{H}\alpha^2\bigr],
+\end{equation}
+where $H = K_2 Z_1 + K_3 Z_2\bar{Z}_1$ as before.
+
+\paragraph{Key insight:} Noise simply shifts $\Delta \to \Delta + \eta$
+in the Lorentzian case.  The radial dynamics become:
+\begin{equation}
+  \boxed{
+  \dot{r} = -(\Delta+\eta)\,r + \frac{r(1-r^2)}{2}(K_2 + K_3 r^2).
+  }
+\end{equation}
+
+\section{Consequences}
+
+\begin{proposition}[Noise shifts the phase diagram uniformly]
+  All critical manifolds shift by replacing $\Delta\to\Delta+\eta$:
+  \begin{align}
+    K_2^{\mathrm{c}}(\eta) &= 2(\Delta+\eta), \\
+    \text{Explosive boundary:}\quad K_3 &= K_2\quad\text{(unchanged)}, \\
+    \text{Fixed point eq:}\quad \Delta+\eta &= \frac{(1-r^2)}{2}(K_2+K_3 r^2).
+  \end{align}
+  The onset is shifted (higher $K_2$ needed), but the explosive boundary
+  $K_3=K_2$ and the qualitative structure are noise-independent.
+\end{proposition}
+
+\paragraph{Physical interpretation:} Noise acts as an ``effective frequency
+spread,'' broadening the distribution and making synchronization harder.  But
+it does not change \emph{which type} of transition occurs---it only shifts
+the critical point.
+
+\section{Non-Gaussian (L\'{e}vy) Noise}
+
+For L\'{e}vy noise with stability index $\alpha_L\in(0,2)$, the diffusion
+term becomes a fractional operator:
+\begin{equation}
+  \eta\frac{\partial^2 f}{\partial\theta^2}
+  \to \eta_L\frac{\partial^{\alpha_L} f}{\partial|\theta|^{\alpha_L}}.
+\end{equation}
+
+The $n$-th Fourier mode now decays as $\ee^{-|n|^{\alpha_L}\eta_L t}$
+instead of $\ee^{-n^2\eta t}$.  On the OA manifold, this modifies the
+effective damping to be mode-dependent, breaking the simple
+$\Delta\to\Delta+\eta$ shift.
+
+For the first mode ($n=1$, relevant for $r_1$):
+\begin{equation}
+  \dot{r} = -(\Delta+\eta_L)\,r + \frac{r(1-r^2)}{2}(K_2+K_3 r^2).
+\end{equation}
+This has the \emph{same form} as Gaussian noise for $r_1$!  The difference
+appears only in higher-order parameters ($r_2$, $r_3$, etc.):
+\begin{equation}
+  Z_n \text{ decays as } \ee^{-|n|^{\alpha_L}\eta_L t},
+\end{equation}
+so $r_2$ decays faster than $r_1$ for $\alpha_L < 2$ (heavy-tailed noise
+preferentially disrupts higher harmonics).
+
+This provides a theoretical explanation for the Lee et al.\ (2025) finding
+that L\'{e}vy noise produces ``extreme synchronization transitions'': the
+$r_2 = r_1^2$ relation is broken more strongly, enabling novel collective
+states.
+
+\end{document}
