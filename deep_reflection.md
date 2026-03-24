@@ -388,3 +388,28 @@ K3 效应随 σ 减弱，不是 K2/Kc 的普适函数。
 - K₃<0："民主同步"(democratic sync)——自调节到 Kc 边缘
 - 分布尾部控制 explosive susceptibility
 - 同步不可被摧毁，但性质可以改变
+
+## 最终综合回答（整合全团队成果）
+
+### 对有限 N Gaussian 系统（N=200, σ=1）
+- K₃>0 在 97% 参数空间帮助同步（r↑, basin↑）
+- 3% 例外在 K₂≈Kc 附近（涨落效应 + 稀有双稳态）
+- K₃<0 总是削弱（r↓, 锁定阈值↓, 多簇↑）
+
+### 文献矛盾的三重根源
+1. K₂/Kc 比值不同（近临界 vs 远超临界）
+2. 频率分布不同（Gaussian vs Lorentzian 方向相反）
+3. N 不同（有限 N 涨落翻转均场预测）
+
+### 最强数学结果
+c[g] = (2/(π²g₀²))∫(g₀-g(ω))/ω² dω
+K₃^exp = Kc³|g''(0)|/(8c[g]g(0))
+Student-t: c(ν) = (ν/π)[Γ(ν/2)/Γ((ν+1)/2)]²
+
+### 最强物理洞察
+频率分布尾部控制 explosive susceptibility：
+重尾→抗explosive，轻尾→促explosive
+
+### 最强应用预测
+Gaussian 群体在 K₂>Kc 时就能被时延驱动到 explosive
+Lorentzian 需要 K₂>2Kc（安全阈值高一倍）
