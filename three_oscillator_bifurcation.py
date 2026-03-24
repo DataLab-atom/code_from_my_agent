@@ -126,8 +126,8 @@ if __name__ == '__main__':
     K2_range = np.linspace(0, 10, 200)
     K3_values = [-2.0, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 3.0]
 
-    print(f"K₂ ∈ [0, 10], {len(K2_range)} points")
-    print(f"K₃ values: {K3_values}")
+    print(f"K2 in [0, 10], {len(K2_range)} points")
+    print(f"K3 values: {K3_values}")
     print(f"ω_diff = {omega_diff}")
     print()
 
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     if max_transitions >= 9:
         print("✓ 验证了 Dai 2025 的 9 次转变预测！")
     else:
-        print(f"当前配置最多 {max_transitions} 次，需调整 ω_diff 或 K₃ 范围")
+        print(f"Max {max_transitions} transitions found, try adjusting omega_diff or K3 range")
 
     # 保存结果
     out = {
