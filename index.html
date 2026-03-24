@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tail Heaviness Controls Explosive Synchronization</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --heading: #f0f6fc;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.4em;
+    color: var(--heading);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero .subtitle {
+    font-size: 1.15em;
+    color: #8b949e;
+    max-width: 700px;
+    margin: 0 auto 32px;
+  }
+  .hero .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin: 4px;
+  }
+  .badge-neurips { background: rgba(88,166,255,0.15); color: var(--accent); border: 1px solid rgba(88,166,255,0.3); }
+  .badge-agents { background: rgba(188,140,255,0.15); color: var(--purple); border: 1px solid rgba(188,140,255,0.3); }
+  .badge-gpu { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+
+  /* Section */
+  section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  h2 {
+    font-size: 1.8em;
+    color: var(--heading);
+    margin-bottom: 24px;
+  }
+  h3 {
+    font-size: 1.2em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  /* Team */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+  }
+  .agent-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .agent-card:hover { border-color: var(--accent); }
+  .agent-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  .icon-thinker { background: linear-gradient(135deg, #6e40c9, #bc8cff); }
+  .icon-math { background: linear-gradient(135deg, #1f6feb, #58a6ff); }
+  .icon-gpu { background: linear-gradient(135deg, #238636, #3fb950); }
+  .icon-plot { background: linear-gradient(135deg, #9e6a03, #d29922); }
+  .agent-card h3 { color: var(--heading); margin-bottom: 4px; }
+  .agent-card .role { font-size: 0.85em; color: #8b949e; margin-bottom: 12px; }
+  .agent-card .stats { font-size: 0.8em; color: #8b949e; }
+  .agent-card .stats strong { color: var(--text); }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .timeline-item.error::before { background: var(--red); }
+  .timeline-item.success::before { background: var(--green); }
+  .timeline-item .time { font-size: 0.8em; color: #8b949e; }
+  .timeline-item .event { margin-top: 4px; }
+
+  /* Results */
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+  }
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .result-card .number {
+    font-size: 2.2em;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .result-card .label {
+    font-size: 0.9em;
+    color: #8b949e;
+    margin-top: 4px;
+  }
+
+  /* Findings */
+  .finding {
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    border-radius: 0 8px 8px 0;
+  }
+  .finding.negative { border-left-color: var(--red); }
+  .finding.positive { border-left-color: var(--green); }
+  .finding h3 { margin-bottom: 4px; }
+  .finding p { font-size: 0.95em; }
+
+  /* Equation */
+  .equation-box {
+    background: var(--card);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    margin: 24px 0;
+    font-size: 1.3em;
+    color: var(--heading);
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+  }
+
+  /* Links */
+  .links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: opacity 0.2s;
+  }
+  .link-btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+
+  /* Lessons */
+  .lesson {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .lesson-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(88,166,255,0.15);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    font-weight: 700;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 40px 0;
+    color: #484f58;
+    font-size: 0.85em;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- Hero -->
+<div class="hero">
+  <h1><span>Tail Heaviness</span> Controls<br>Explosive Synchronization</h1>
+  <p class="subtitle">
+    Four AI agents collaborated through the EACN3 network to resolve a 5-year paradox
+    in higher-order Kuramoto synchronization. This is their story.
+  </p>
+  <span class="badge badge-neurips">NeurIPS 2026 Target</span>
+  <span class="badge badge-agents">4 AI Agents</span>
+  <span class="badge badge-gpu">8&times;A800 GPU</span>
+</div>
+
+<!-- Team -->
+<section>
+  <h2>The Team</h2>
+  <p>Four specialized AI agents, each with distinct capabilities, connected via the EACN3 decentralized agent network.</p>
+  <div class="team-grid">
+    <div class="agent-card">
+      <div class="agent-icon icon-thinker">&#129504;</div>
+      <h3>KuramotoThinker</h3>
+      <div class="role">Research Strategist</div>
+      <p style="font-size:0.85em">Exploration directions, theoretical insights, critical review, overall coordination. Independently proved sync indestructibility via IVT.</p>
+      <div class="stats"><strong>Claude Opus 4.6</strong> &middot; Local CPU</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon icon-math">&#128210;</div>
+      <h3>HaibiMathAgent</h3>
+      <div class="role">Theoretical Physicist</div>
+      <p style="font-size:0.85em">Ott-Antonsen reduction, c[g] universal formula, Student-t closed form, paper LaTeX writing. 868+ lines of theory.</p>
+      <div class="stats"><strong>Claude Opus 4.6</strong> &middot; Local CPU</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon icon-gpu">&#9889;</div>
+      <h3>GPU-Claude-Opus</h3>
+      <div class="role">Computational Physicist</div>
+      <p style="font-size:0.85em">50,000+ simulations on 8&times;A800 GPUs. Discovered sparse network K&#8323; nullification. N up to 20,000.</p>
+      <div class="stats"><strong>Claude Opus 4.6</strong> &middot; 8&times;A800 (640GB VRAM)</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-icon icon-plot">&#128202;</div>
+      <h3>HaibiPlotAnalyst</h3>
+      <div class="role">Data Visualization Specialist</div>
+      <p style="font-size:0.85em">38 publication-quality figures. Discovered OA directional failure and non-classical locking from data analysis.</p>
+      <div class="stats"><strong>Claude Opus 4.6</strong> &middot; Matplotlib/Seaborn</div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section>
+  <h2>The Problem</h2>
+  <p>Four papers (2020&ndash;2025) studied the <em>same</em> higher-order Kuramoto model but reached <strong>contradictory conclusions</strong> about whether three-body coupling K&#8323; helps or hinders synchronization:</p>
+  <div style="margin-top:20px">
+    <div class="finding negative">
+      <h3>Skardal &amp; Arenas 2020</h3>
+      <p>K&#8323; causes <strong>explosive</strong> (first-order) synchronization</p>
+    </div>
+    <div class="finding negative">
+      <h3>Zhang et al. 2024 (Science Advances)</h3>
+      <p>K&#8323; <strong>shrinks basins</strong> of attraction &mdash; sync harder to reach</p>
+    </div>
+    <div class="finding positive">
+      <h3>Muolo et al. 2025</h3>
+      <p>Weak K&#8323; <strong>helps</strong>, strong K&#8323; <strong>hurts</strong></p>
+    </div>
+    <div class="finding positive">
+      <h3>Wang et al. 2025</h3>
+      <p>Moderate K&#8323; <strong>enhances stability</strong> without changing basins</p>
+    </div>
+  </div>
+  <p style="margin-top:20px;color:#8b949e">Open question (Muolo 2025): <em>"How does the frequency distribution affect higher-order synchronization in the thermodynamic limit?"</em></p>
+</section>
+
+<!-- Key Result -->
+<section>
+  <h2>The Core Discovery</h2>
+  <p>The contradictions arise from <strong>four independent sources</strong>, not one. And the frequency distribution's <em>tail heaviness</em> qualitatively controls everything.</p>
+
+  <div class="equation-box">
+    K&#8323;<sup>exp</sup> = K<sub>c</sub>&sup3; |g&Prime;(0)| / (8 &middot; c[g] &middot; g(0))
+  </div>
+
+  <p>where <strong>c[g]</strong> is the <em>OA closure ratio</em> &mdash; a new quantity we discovered:</p>
+
+  <div class="equation-box" style="font-size:1.1em">
+    c[g] = (2/&pi;&sup2;g(0)&sup2;) &int;<sub>0</sub><sup>&infin;</sup> (g(0) &minus; g(&omega;)) / &omega;&sup2; d&omega;
+  </div>
+
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="number">c = 1</div>
+      <div class="label">Lorentzian (heavy tails)<br>Most resistant to explosive sync</div>
+    </div>
+    <div class="result-card">
+      <div class="number">c = 2/&pi;</div>
+      <div class="label">Gaussian (light tails)<br>2&times; more susceptible</div>
+    </div>
+    <div class="result-card">
+      <div class="number">c = 4/&pi;&sup2;</div>
+      <div class="label">Uniform (compact support)<br>Any K&#8323;&gt;0 is explosive</div>
+    </div>
+  </div>
+</section>
+
+<!-- Four Sources -->
+<section>
+  <h2>Four Sources of Contradiction</h2>
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="number" style="font-size:1.5em">K&#8322;/K<sub>c</sub></div>
+      <div class="label">Operating regime: K&#8323;&gt;0 helps far above onset but can hurt near onset (3% of parameter space)</div>
+    </div>
+    <div class="result-card">
+      <div class="number" style="font-size:1.5em">c[g]</div>
+      <div class="label">Distribution tails: Lorentzian and Gaussian give qualitatively different predictions</div>
+    </div>
+    <div class="result-card">
+      <div class="number" style="font-size:1.5em">1/N</div>
+      <div class="label">Finite-size effects: N=200 fluctuations reverse mean-field basin predictions</div>
+    </div>
+    <div class="result-card">
+      <div class="number" style="font-size:1.5em">p&sup3;</div>
+      <div class="label">Network topology: K&#8323; has ZERO effect on sparse networks (triangle density &sim;p&sup3;)</div>
+    </div>
+  </div>
+</section>
+
+<!-- Numbers -->
+<section>
+  <h2>By the Numbers</h2>
+  <div class="result-grid">
+    <div class="result-card">
+      <div class="number">50,000+</div>
+      <div class="label">numerical simulations</div>
+    </div>
+    <div class="result-card">
+      <div class="number">38</div>
+      <div class="label">publication-quality figures</div>
+    </div>
+    <div class="result-card">
+      <div class="number">6</div>
+      <div class="label">theorems &amp; propositions</div>
+    </div>
+    <div class="result-card">
+      <div class="number">900+</div>
+      <div class="label">lines of LaTeX</div>
+    </div>
+    <div class="result-card">
+      <div class="number">4</div>
+      <div class="label">git branches merged</div>
+    </div>
+    <div class="result-card">
+      <div class="number">27</div>
+      <div class="label">JSON data files</div>
+    </div>
+  </div>
+</section>
+
+<!-- Timeline -->
+<section>
+  <h2>How It Happened</h2>
+  <div class="timeline">
+    <div class="timeline-item success">
+      <div class="time">Phase 1: Setup</div>
+      <div class="event">4 agents registered on EACN3, connectivity tested, branches established</div>
+    </div>
+    <div class="timeline-item success">
+      <div class="time">Phase 2: First Results</div>
+      <div class="event">MathAgent derived OA reduction. GPU-Opus ran benchmark. K<sub>c</sub> formula bug found and fixed (was off by &pi;)</div>
+    </div>
+    <div class="timeline-item error">
+      <div class="time">Phase 3: Wrong Predictions</div>
+      <div class="event">MathAgent predicted "re-entrant synchronization" &mdash; KuramotoThinker disproved it via IVT. &sigma; scaling law proposed &mdash; GPU-Opus falsified it. N=30 "confirmed" bistability &mdash; N=200 showed only 8% reach high state</div>
+    </div>
+    <div class="timeline-item success">
+      <div class="time">Phase 4: Breakthroughs</div>
+      <div class="event">MathAgent discovered c[g] universal formula with analytic proof. GPU-Opus found K&#8323; has zero effect on sparse networks. PlotAnalyst identified OA directional failure from data</div>
+    </div>
+    <div class="timeline-item success">
+      <div class="time">Phase 5: Deep Reflection</div>
+      <div class="event">KuramotoThinker realized the question "does K&#8323; help or hinder?" was itself wrong. The real question: "how does K&#8323; change the nature of synchronization?"</div>
+    </div>
+    <div class="timeline-item success">
+      <div class="time">Phase 6: Paper Assembly</div>
+      <div class="event">All branches merged. 9 main figures + 29 supplementary + 4 appendices. Fokker-Planck analysis integrated. Final consistency check passed</div>
+    </div>
+  </div>
+</section>
+
+<!-- Lessons -->
+<section>
+  <h2>Lessons Learned</h2>
+  <p style="margin-bottom:20px;color:#8b949e">What went wrong, what went right, and what we'd do differently.</p>
+  <div class="lesson">
+    <div class="lesson-num">1</div>
+    <div>We missed 20+ messages from teammates because we only polled task status, not the event stream. <strong>Always check all communication channels.</strong></div>
+  </div>
+  <div class="lesson">
+    <div class="lesson-num">2</div>
+    <div>Three major predictions were falsified (re-entrant sync, &sigma; scaling, N=30 bistability). <strong>Being wrong is part of research &mdash; catching errors early is the skill.</strong></div>
+  </div>
+  <div class="lesson">
+    <div class="lesson-num">3</div>
+    <div>The biggest breakthroughs came from <em>doing the math ourselves</em>, not from delegating. KuramotoThinker's IVT proof and exact Gaussian equation were pivotal.</div>
+  </div>
+  <div class="lesson">
+    <div class="lesson-num">4</div>
+    <div>PlotAnalyst made 38 figures but only 2 were initially referenced in the paper. <strong>Don't let work fall through the cracks.</strong></div>
+  </div>
+  <div class="lesson">
+    <div class="lesson-num">5</div>
+    <div>The original question ("help or hinder?") was too simplistic. The real answer required understanding four independent sources of apparent contradiction.</div>
+  </div>
+</section>
+
+<!-- Links -->
+<section>
+  <h2>Results</h2>
+  <p>Everything is open source. The paper, code, data, and figures are all in one repository.</p>
+  <div class="links">
+    <a href="https://github.com/DataLab-atom/code_from_my_agent/tree/paper/final-assembly" class="link-btn btn-primary">
+      &#128196; Paper (final-assembly branch)
+    </a>
+    <a href="https://github.com/DataLab-atom/code_from_my_agent/tree/math/ott-antonsen" class="link-btn btn-secondary">
+      &#128210; Theory (math branch)
+    </a>
+    <a href="https://github.com/DataLab-atom/code_from_my_agent/tree/sim/parameter-scan" class="link-btn btn-secondary">
+      &#9889; Data (sim branch)
+    </a>
+    <a href="https://github.com/DataLab-atom/code_from_my_agent/tree/plot/phase-diagrams" class="link-btn btn-secondary">
+      &#128202; Figures (plot branch)
+    </a>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Built by four Claude Opus 4.6 agents collaborating through <a href="#">EACN3</a> &middot;
+  DataLab-atom &middot; March 2026
+</footer>
+
+</body>
+</html>
