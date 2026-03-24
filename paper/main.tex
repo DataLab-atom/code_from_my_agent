@@ -589,84 +589,35 @@ For each configuration, we measure:
   \label{fig:phase-diagram}
 \end{figure}
 
-\paragraph{Experiment 1: Classical benchmark.}
-The measured critical coupling at $\sigma=1$, $N=200$ is $\Kc^{\mathrm{num}}
-=1.55$, compared to the theoretical $\Kc=1.596$ (error $\approx 3\%$,
-attributable to finite-size effects).  At $N=500$,
-$\Kc^{\mathrm{num}}=1.632$ (error $2.3\%$).  The square-root scaling
-$r\sim\sqrt{K_2-\Kc}$ is confirmed.  The $\Order(N^3)\to\Order(N)$
-mean-field decomposition of the triplet term enables efficient large-scale
-simulations.
+\paragraph{Benchmark and onset.}
+$\Kc^{\mathrm{num}}\!=\!1.55$ at $N\!=\!200$ ($3\%$ from theory);
+$\sqrt{K_2-\Kc}$ scaling confirmed.  Finite-$N$ variance:
+$\Kc\!=\!1.21\pm0.13$ over 20 random seeds at $N\!=\!200$.
 
-\paragraph{Experiment 2: Critical slowing down and explosive transition.}
-The relaxation time $\tau_{\mathrm{relax}}$ near the phase boundary confirms
-\Cref{thm:explosive}.  For $K_3=0$ (classical), $\tau_{\mathrm{relax}}$
-peaks at $\approx 12$ time units---characteristic of a continuous (second-order)
-transition with critical slowing down.  For $K_3=1.5>K_2^{\mathrm{boundary}}$,
-$\tau_{\mathrm{relax}}$ spikes to $48.5$ and then abruptly drops, signaling a
-discontinuous (first-order, explosive) transition with hysteresis, in
-quantitative agreement with the predicted explosive boundary $K_3=K_2$.
+\paragraph{Explosive transition and distribution dependence.}
+\Cref{thm:explosive} is confirmed across three distributions.  At
+$K_3\!=\!1$, the maximum $r$-jump is $0.70$ (uniform), $0.62$ (Gaussian),
+$0.24$ (Lorentzian)---matching the $\kappa$ ordering.  Forward-backward
+sweeps at $K_3\!=\!1.5$ show hysteresis gap $0.41$ (Gaussian, $N\!=\!200$),
+with relaxation time spiking to $48.5$ then dropping abruptly---clear
+first-order signature.  At $K_3\!=\!1.0$ the gap is $0.10$ (near threshold).
 
-\paragraph{Experiment 3: Second-order parameter $r_2$.}
-Our analytical prediction $r_2=r_1^2$ on the Ott--Antonsen manifold
-is confirmed quantitatively.  At $K_2=4$, $K_3=2$: $r_2/r_1^2=0.972$
-(near the OA prediction of 1.0).  The ratio systematically deviates for
-$K_3<0$: at $K_2=2$, $K_3=-1$, $r_2/r_1^2=0.698$, coinciding with the
-emergence of 2--3 cluster states.  In the incoherent regime ($r_1\approx 0.1$),
-$r_2/r_1^2\gg 1$ (up to $\sim 9$), confirming that the incoherent state
-lies far from the OA manifold.  These results validate $r_2/r_1^2$ as a
-practical diagnostic for OA validity and cluster formation.
+\paragraph{OA validity and beyond-OA effects.}
+The ratio $r_2/r_1^2$ validates OA: $0.972$ at $(K_2,K_3)\!=\!(4,2)$,
+deviating to $0.698$ at $(2,-1)$ where 2--3 clusters form.  Locking order
+shows $K_3>0$ weakens frequency selection ($\rho$: $-0.55\to-0.13$),
+supporting the ``winner-takes-all'' mechanism.  Under budget $K_2\!+\!K_3=C$,
+pure pairwise maximizes $r^*$ (OA-optimal) but mixed allocation improves
+basin probability---the \citet{Muolo2025} advantage is a finite-$N$ effect.
 
-\paragraph{Experiment 4: Budget allocation and locking order.}
-Under the constraint $K_2+K_3=C$, OA predicts pure pairwise coupling
-($K_3=0$) maximizes $r^*$; finite-$N$ simulations show moderate $K_3>0$ can
-improve basin probability instead---confirming that mixed-allocation advantage
-\citep{Muolo2025} is a finite-size effect.
-Locking order analysis reveals that $K_3>0$ weakens the
-$|\omega_i|$--lock-time correlation ($\rho$: $-0.55\to -0.13$),
-indicating a ``winner-takes-all'' mechanism where phase alignment overrides
-frequency proximity.
-
-\paragraph{Experiment 5: Hysteresis and transition order.}
-Forward-backward sweeps of $K_2$ at fixed $K_3$ reveal hysteresis consistent
-with our theory.  At $K_3=1.5$ (well above the predicted explosive boundary
-$K_3\approx K_2^{\mathrm{boundary}}$), the hysteresis gap reaches
-$\max|r_{\mathrm{fwd}}-r_{\mathrm{bwd}}|=0.41$---a clear first-order
-transition.  At $K_3=1.0$ the gap drops to $0.10$, near the predicted
-boundary.  Interestingly, moderate hysteresis ($\sim 0.12$--$0.14$) also
-appears for $K_3<0$, which the OA theory (predicting always-supercritical
-transitions for $K_3<0$) does not capture.  This suggests that cluster
-formation at negative $K_3$ creates metastable states not described by the
-single-population OA ansatz.
-
-\paragraph{Experiments 6--7: Distribution effects and explosive susceptibility.}
-Comparing Gaussian, Lorentzian, and uniform distributions confirms
-\Cref{thm:explosive} quantitatively.  At $K_3\!=\!1$, the maximum $r$-jump is
-$0.70$ (uniform), $0.62$ (Gaussian), $0.24$ (Lorentzian)---precisely the
-ordering predicted by $\kappa$: uniform ($\kappa\!=\!0$, most explosive) $>$
-Gaussian ($\kappa\!=\!1/\pi$) $>$ Lorentzian ($\kappa\!=\!1$, most resistant).
-No chimera states were found in all-to-all networks ($N\!=\!500$).
-
-\paragraph{Experiment 8: 2D phase diagram.}
-The $20\times 20$ scan over $K_2\in[0,4]$, $K_3\in[-2,2]$ at $\sigma=1$,
-$N=200$ provides the first complete numerical phase diagram for this model.
-Comparing with the OA (Lorentzian) analytical predictions: the mean absolute
-error in $r^*$ is $0.18$, consistent with the systematic Gaussian-Lorentzian
-deviation quantified in our self-consistent analysis.  The explosive
-synchronization boundary is detected at $(K_2,K_3)\approx(1.47,1.58)$, close
-to the predicted diagonal $K_3=K_2$ (\Cref{thm:explosive}).  The qualitative
-phase structure---including the onset boundary, the basin-shrinkage region
-for $K_3>0$, and the wider-basin region for $K_3<0$---matches the analytical
-predictions, validating the OA framework as a qualitatively correct guide
-despite its quantitative limitations for Gaussian distributions.
-
-\paragraph{Experiment 9: Synchronization robustness.}
-Extending $K_3$ to $[0,8]$ confirms \Cref{prop:indestructible}: $r^*$
-increases monotonically with $K_3$ and never drops, even at $K_3/K_2>3$.
-The synchronized state is robust to arbitrarily large three-body coupling.
-However, the \emph{character} of synchronization changes: the hysteresis
-experiment (Exp.\ 5) shows the transition becoming first-order at $K_3=1.5$
-(gap $0.41$), consistent with \Cref{thm:explosive}.
+\paragraph{Phase diagram and robustness.}
+The $20\!\times\!20$ $(K_2,K_3)$ scan (\Cref{fig:phase-diagram}) confirms
+the qualitative phase structure.  OA vs.\ numerical MAE is $0.18$
+(Gaussian--Lorentzian gap).  Explosive boundary detected at
+$(1.47,1.58)\approx K_3\!=\!K_2$.  Extending $K_3$ to $[0,8]$ confirms
+\Cref{prop:indestructible}: $r^*$ increases monotonically, never drops.
+A $6\!\times\!16\!\times\!16$ scan over $\sigma\in\{0.3,\ldots,1.5\}$
+validates the $\sigma$-scaling (\Cref{prop:sigma-scaling}).
 
 
 %% ============================================================
