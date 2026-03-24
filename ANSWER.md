@@ -59,9 +59,14 @@ The Lorentzian OA reduction (`dr/dt = -Δr + r(1-r²)/2·(K₂+K₃r²)`) predic
 - The Gaussian exact self-consistent equation gives the correct direction (validated: r*=0.909 analytic vs 0.909 numerical at K₃=+1, K₂=2)
 - **Finite-size data shows NO convergence toward OA even at N=500**
 
-### 5. Open questions
+### 5. Kc depends on K₃ (even at N→∞ for Gaussian)
 
-1. **Kc(K₃)**: Numerical data shows Kc shifts linearly with K₃. Gaussian exact derivation needed.
+Gaussian exact self-consistent data confirms Kc(K₃) is NOT constant:
+- K₃=-2: Kc=1.516, K₃=0: Kc=1.483, K₃>1: Kc≈1.459 (saturates)
+- Shift ΔKc ≈ 0.06 at N→∞, amplified to ~0.2 at N=200
+- Lorentzian OA predicts Kc independent of K₃ — wrong for Gaussian
+
+### 6. Open questions
 2. **K₄ truncation**: Four-body term is 45-75% of K₃ effect. Is the K₃-only model self-consistent?
 3. **Large K₃ regime**: Zhang 2024's basin shrinkage might occur at K₃ > 2 (beyond our scan range).
 4. **N→∞ true limit**: Need N=1000+ to distinguish finite-size from true thermodynamic behavior.
