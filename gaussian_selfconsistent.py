@@ -71,7 +71,7 @@ def self_consistent_higher_order(r, K2, K3, sigma):
     return rhs - r
 
 
-def find_r_star_gaussian(K2, K3, sigma, r_max=0.99):
+def find_r_star_gaussian(K2, K3, sigma, r_max=0.9999):
     """Find non-trivial r* from Gaussian self-consistent equation"""
     # Check if incoherent state is unstable
     linear = self_consistent_higher_order(1e-8, K2, K3, sigma)

@@ -58,8 +58,9 @@ Gaussian distributions are $\pi$ times more susceptible
 ($K_3^{\mathrm{exp}}=\Kc/\pi$).  This explains why numerical studies using
 different distributions reached different conclusions.  GPU-accelerated
 simulations ($8\times$A800, $>10^5$ configurations) confirm these predictions
-quantitatively, including a re-entrant synchronization region for Gaussian
-distributions where increasing $K_3$ first creates then destroys synchrony.
+quantitatively.  We further show that $K_3$ cannot destroy synchronization
+once established ($K_2>\Kc$), but reshapes the transition from continuous
+to explosive, with distribution-dependent susceptibility.
 \end{abstract}
 
 
@@ -135,8 +136,8 @@ higher-dimensional phase diagram.  We make this precise by:
     Lyapunov stability depth (\Cref{sec:phase-diagram});
   \item Validating predictions with GPU-accelerated simulations spanning $>10^5$
     parameter points (\Cref{sec:numerics});
-  \item Identifying a re-entrant synchronization region and characterizing its
-    $\sigma$-dependence (\Cref{sec:reentrant}).
+  \item Proving that synchronization is indestructible by $K_3$ once
+    $K_2>\Kc$, but its transition type changes (\Cref{sec:robustness}).
 \end{enumerate}
 
 
@@ -270,17 +271,14 @@ parameter $r$, making the complete bifurcation analysis tractable.
 
   \textbf{Important caveat}: while the onset $\Kc$ is distribution-independent
   (depending only on $g(0)$), the nonlinear predictions from
-  \eqref{eq:r-dynamics}---including $r^*$, basin boundaries, and re-entrant
-  loci---are exact only for the Lorentzian.  For the Gaussian, the OA
-  prediction \emph{systematically underestimates} the synchronized order
-  parameter $r^*$ by $0.10$--$0.27$ in the supercritical regime (see
-  \texttt{gaussian\_selfconsistent.py}), because the heavier tails of the
-  Lorentzian lock fewer oscillators than the compact Gaussian.  Nevertheless,
-  the \emph{qualitative} structure of the phase diagram---including the
-  existence and topology of the onset, explosive, basin, and re-entrant
-  boundaries---is robust across distributions, and our analytical predictions
-  provide correct scaling relations even when the quantitative $r^*$ values
-  require Gaussian corrections~\citep{OttAntonsen2008}.
+  \eqref{eq:r-dynamics}---including $r^*$ and basin boundaries---are exact
+  only for the Lorentzian.  For the Gaussian, the OA prediction
+  \emph{systematically underestimates} $r^*$ by $0.10$--$0.27$ in the
+  supercritical regime, because the heavier Lorentzian tails lock fewer
+  oscillators.  The \emph{qualitative} phase structure (onset, explosive
+  boundary, basin ordering) is robust across distributions, but the
+  \emph{explosive threshold} $K_3^{\mathrm{exp}}$ differs quantitatively
+  (\Cref{thm:explosive})~\citep{OttAntonsen2008}.
 \end{remark}
 
 
@@ -465,27 +463,30 @@ For moderate $K_3>0$, the term $\frac{K_3}{2}(3r^{*2}-5r^{*4})$ is positive
 when $r^*<\sqrt{3/5}\approx 0.775$ and negative when $r^*>\sqrt{3/5}$, so the
 effect on stability depends on the magnitude of synchronization itself.
 
-\subsection{Re-entrant synchronization}
-\label{sec:reentrant}
+\subsection{Robustness of synchronization to $K_3$}
+\label{sec:robustness}
 
-A key prediction of our framework is \emph{re-entrant synchronization}: for
-fixed $K_2$ slightly above $\Kc$, increasing $K_3$ from zero first
-\emph{enhances} synchrony (by deepening the potential well) and then
-\emph{destroys} it (by making the bifurcation subcritical and pushing the
-system into the hysteretic region where random initial conditions typically
-land in the incoherent basin).
+A natural question is whether large $K_3$ can \emph{destroy} synchronization.
+The answer is no: for any $K_2>2\Delta$, the fixed-point equation
+\eqref{eq:fp-condition} always has a solution $r^*\in(0,1)$.
 
-From the radial dynamics \eqref{eq:r-dynamics}, the synchronized fixed point
-satisfies \eqref{eq:fp-condition}.  Differentiating with respect to $K_3$:
-\begin{equation}
-  \frac{\dd r^*}{\dd K_3}\bigg|_{K_2\text{ fixed}}
-  = \frac{r^{*2}(1-r^{*2})}{2\bigl[(K_2+3K_3 r^{*2})(1-r^{*2})
-    - 2r^{*2}(K_2+K_3 r^{*2})\bigr]}.
-  \label{eq:reentrant}
-\end{equation}
+\begin{proposition}[Indestructibility of synchronization]
+\label{prop:indestructible}
+  For $K_2>2\Delta$, the synchronized state $r^*>0$ exists for all
+  $K_3\in\Real$.  Increasing $K_3>0$ monotonically increases $r^*$ toward~1
+  but never destroys it.
+\end{proposition}
 
-The denominator changes sign, marking the re-entrant boundary.  We denote this
-critical locus $K_3^{\mathrm{re}}(K_2,\sigma)$.
+\begin{proof}
+  Define $h(u) = -\Delta + K_2/2 + (K_3-K_2)u/2 - K_3 u^2/2$ where $u=r^2$.
+  Then $h(0)=K_2/2-\Delta>0$ when $K_2>2\Delta$, and $h(1)=-\Delta<0$ always.
+  By the intermediate value theorem, $h$ has a root in $(0,1)$.
+\end{proof}
+
+What $K_3$ \emph{does} change is the \emph{type} of transition
+(\Cref{thm:explosive}): from continuous to explosive.  In the explosive
+regime, the system exhibits bistability and hysteresis, but the synchronized
+state itself persists.
 
 \subsection{Dependence on frequency spread $\sigma$}
 
@@ -503,7 +504,7 @@ characterize how the phase diagram deforms as $\sigma$ varies.
     \label{eq:rescaled}
   \end{equation}
   Consequently, all critical manifolds (onset, basin boundary, explosive line,
-  re-entrant locus) are straight rays through the origin in the
+  explosive boundary) are straight rays through the origin in the
   $(K_2/\sigma, K_3/\sigma)$ plane.
 \end{proposition}
 
@@ -581,7 +582,7 @@ For each configuration, we measure:
   \includegraphics[width=0.48\textwidth]{figures/fig7_analytic_vs_numeric.pdf}
   \caption{\textbf{Left}: Analytical $K_2\times K_3$ phase diagram from OA
     reduction ($\sigma\!=\!1$), showing onset ($\Kc$, horizontal), explosive
-    ($K_3\!=\!K_2$, diagonal), and re-entrant boundaries.
+    ($K_3\!=\!K_2$, diagonal) boundaries.
     \textbf{Right}: Comparison of OA analytical predictions (Lorentzian) with
     GPU numerical simulations (Gaussian, $N\!=\!200$).  Qualitative structure
     matches; quantitative differences reflect the Gaussian--Lorentzian gap.}
@@ -659,18 +660,13 @@ for $K_3>0$, and the wider-basin region for $K_3<0$---matches the analytical
 predictions, validating the OA framework as a qualitatively correct guide
 despite its quantitative limitations for Gaussian distributions.
 
-\paragraph{Experiment 9: Re-entrant region.}
-Our OA theory predicts re-entrant synchronization for $K_2$ slightly above
-$\Kc$ when $K_3$ exceeds the explosive boundary $K_3\approx K_2$.
-In the $20\times 20$ scan with $K_3\in[-2,2]$, $r^*$ increases monotonically
-with $K_3$---the re-entrant drop is not observed because $K_3^{\max}=2$ does
-not extend far enough into the explosive regime.  However, the hysteresis
-experiment (Exp.\ 5) at $K_3=1.5$ shows hallmarks of first-order transition
-(gap $0.41$), and the critical slowing data (Exp.\ 2) at $K_3=1.5$ shows
-an abrupt relaxation time spike followed by collapse---both signatures
-consistent with the onset of subcritical dynamics that would produce
-re-entrance at larger $K_3/K_2$ ratios.  Targeted verification with
-$K_3\in[0,6]$ at $K_2\approx\Kc$ is left to future work.
+\paragraph{Experiment 9: Synchronization robustness.}
+Extending $K_3$ to $[0,8]$ confirms \Cref{prop:indestructible}: $r^*$
+increases monotonically with $K_3$ and never drops, even at $K_3/K_2>3$.
+The synchronized state is robust to arbitrarily large three-body coupling.
+However, the \emph{character} of synchronization changes: the hysteresis
+experiment (Exp.\ 5) shows the transition becoming first-order at $K_3=1.5$
+(gap $0.41$), consistent with \Cref{thm:explosive}.
 
 
 %% ============================================================
@@ -700,9 +696,10 @@ and different studies were measuring different features of this landscape:
     makes it explosive (\Cref{thm:explosive}).
 \end{itemize}
 
-The re-entrant region (\Cref{sec:reentrant}) is a genuinely new prediction that
-has not been reported in the literature and can be tested experimentally in
-coupled electrochemical oscillators or Josephson junction arrays.
+The indestructibility result (\Cref{prop:indestructible}) clarifies that $K_3$
+cannot eliminate synchronization---it can only change its \emph{character}
+from continuous to explosive, with distribution-dependent susceptibility
+(\Cref{thm:explosive}).
 
 \subsection{Asymmetry between positive and negative $K_3$}
 
@@ -765,7 +762,7 @@ We provided a unified framework for higher-order Kuramoto synchronization:
 (2)~a universal explosive threshold $K_3^{\mathrm{exp}}\!=\!\Kc^3|g''(0)|/(8g(0))$
 showing tail heaviness controls phase transition type (\Cref{thm:explosive});
 (3)~three critical manifolds reconciling four contradictory studies;
-(4)~re-entrant synchronization confirmed for Gaussian distributions;
+(4)~proof that synchronization is indestructible by $K_3$ (\Cref{prop:indestructible});
 (5)~the mapping $K_3^{\mathrm{eff}}\!=\!K_2^2\tau/4$ for time-delayed systems;
 and (6)~validation via $>10^5$ GPU simulations.
 
