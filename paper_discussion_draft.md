@@ -31,3 +31,22 @@ For neural synchronization and epilepsy early warning:
 1. Multi-cluster dynamics for K₃<0: observed numerically but no analytical theory beyond mean-field
 2. Finite-N Fokker-Planck analysis explaining reversed critical slowing
 3. Extension to sparse hypergraphs where K₃ provides independent topological information (Muolo's "mixed allocation advantage" likely originates here)
+
+## 5.5 Network Topology: The Fourth Source of Contradiction
+
+GPU-Opus discovered that K₃ has ZERO effect on sparse Erdos-Renyi networks (p=0.1): r≈0.069 for all K₃∈[-1,1.5]. At p=0.3, K₃ effect is still negligible. Only at p=1.0 (all-to-all) does K₃ produce the large effects we analyzed.
+
+Physical mechanism: Three-body coupling sin(2θⱼ-θₖ-θᵢ) requires triangles (i-j-k all connected). Triangle density scales as p³. At p=0.1, triangle density ~0.001 — the three-body term has no structural substrate.
+
+This resolves the remaining literature puzzle:
+- Wang 2025 (ring network, dense): K₃ effective → moderate enhancement
+- Zhang 2024 (structured networks): K₃ effective in dense regions, ineffective in sparse
+- Muolo 2025 (random hypergraphs): K₃ effect depends on hyperedge density
+
+Prediction: K₃ efficacy threshold occurs at triangle density ~O(1/N), providing a sharp criterion for when higher-order interactions matter.
+
+## Updated Contradiction Resolution: FOUR Sources
+1. K₂/Kc ratio (near-critical vs supercritical)
+2. Frequency distribution tails (c[g] controls explosive threshold)
+3. Finite-N effects (reverse mean-field basin predictions)
+4. **Network topology** (triangle density gates K₃ efficacy)
