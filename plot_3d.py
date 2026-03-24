@@ -99,7 +99,7 @@ def plot_Kc_shift(sigma_list, K2_list, K3_list, r, out_dir="figures"):
     k3_pos_idx = np.argmin(np.abs(K3_list - 0.5))
     k3_neg_idx = np.argmin(np.abs(K3_list + 0.5))
 
-    Kc_theory = 2.0 * np.sqrt(2 * np.pi) * sigma_list
+    Kc_theory = 2.0 * np.sqrt(2 * np.pi) / np.pi * sigma_list
 
     def find_Kc(r_slice, K2_list, thresh=0.3):
         for j in range(len(K2_list) - 1):
