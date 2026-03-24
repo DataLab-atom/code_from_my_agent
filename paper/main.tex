@@ -846,6 +846,56 @@ With $z=r\ee^{\ii\phi}$ and extracting the radial part:
 confirming \eqref{eq:r-dynamics}.  \qed
 
 
+\section{Proof of the OA Closure Ratio}
+\label{app:closure-ratio}
+
+For the stationary Kuramoto state with mean-field amplitude $h$ and
+frequency distribution $g(\omega)$, the order parameters are
+$Z_1 = \int_{-h}^{h}\sqrt{1-\omega^2/h^2}\,g(\omega)\,\dd\omega$
+(locked oscillators; drifting contribute zero) and
+\begin{align}
+  Z_2 &= \underbrace{\int_{-h}^{h}(1-2\omega^2/h^2)\,g(\omega)\,\dd\omega}_{Z_2^{\mathrm{lock}}}
+  + \underbrace{2\int_{h}^{\infty}\!\frac{-(\omega-\sqrt{\omega^2-h^2})^2}{h^2}\,g(\omega)\,\dd\omega}_{Z_2^{\mathrm{drift}}}.
+\end{align}
+
+\textbf{Step 1} (Exact cancellation at $\Order(h)$).
+Substituting $u=\omega/h$ and taking $h\to 0$:
+$Z_2^{\mathrm{lock}} = \tfrac{2}{3}hg(0) + \Order(h^3)$ and
+$Z_2^{\mathrm{drift}} = -\tfrac{2}{3}hg(0) + \Order(h^2)$,
+where the drift integral uses
+$\int_1^\infty(u-\sqrt{u^2-1})^2\,\dd u = 1/3$.
+
+\textbf{Step 2} (Leading residual).
+The $\Order(h^2)$ drift correction is
+$\Delta Z_2^{\mathrm{drift}} = 2\int_1^\infty(u-\sqrt{u^2-1})^2
+[1-g(hu)/g(0)]\,\dd u$.
+Setting $v=hu$ and using
+$(u-\sqrt{u^2-1})^2 = 1/(4u^2) + \Order(1/u^4)$
+with remainder bounded by $1/(4u^2(4u^2-2))$:
+\[
+  \Delta Z_2^{\mathrm{drift}}
+  = \frac{h}{2}\int_0^\infty\frac{1-g(\omega)/g(0)}{\omega^2}\,\dd\omega
+  + \Order(h^2).
+\]
+
+\textbf{Step 3} (Assembly).
+Combining with $Z_1 = hg(0)\pi/2 + \Order(h^2)$:
+\[
+  c[g] = \frac{Z_2}{Z_1^2}
+  = \frac{h\cdot g(0)\cdot(h/2)\int_0^\infty\frac{1-g/g(0)}{\omega^2}\dd\omega}
+         {h^2 g(0)^2 \pi^2/4}
+  = \frac{2}{\pi^2 g(0)^2}\int_0^\infty\frac{g(0)-g(\omega)}{\omega^2}\,\dd\omega.
+\]
+
+\textbf{Gaussian}: $g(\omega)=\ee^{-\omega^2/(2\sigma^2)}/(\sigma\sqrt{2\pi})$
+gives $\int_0^\infty(1-\ee^{-v^2})/v^2\,\dd v = \sqrt\pi$
+(by $f(a)=\int(1-\ee^{-av^2})/v^2\,\dd v$, $f'(a)=\sqrt\pi/(2\sqrt a)$,
+$f(0)=0$), yielding $c=2/\pi$.
+
+\textbf{Lorentzian}: $\int_0^\infty\omega^2/[(\omega^2+\Delta^2)\omega^2]\,\dd\omega
+= \pi/(2\Delta)$, yielding $c=1$. \qed
+
+
 \section{Time-Delay Equivalence}
 \label{app:time-delay}
 
