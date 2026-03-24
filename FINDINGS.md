@@ -34,6 +34,24 @@ Evidence:
 
 10. **No anti-phase clusters**: Even at K₃=-5, frequency heterogeneity (σ=1) prevents clean bifurcation into two phase-locked clusters.
 
+11. **Budget constraint: pure pairwise always optimal**: K₂*=C, K₃*=0 for all budgets and σ. Contradicts Muolo 2025 but agrees with OA.
+
+12. **Literature contradiction resolved**: Zhang 2024 "K₃ shrinks basin" NOT reproduced in all-to-all network. K₃>0 increases BOTH r and basin probability in our data. The discrepancy with Zhang is likely due to **topology** (hypergraph vs all-to-all), not measurement differences.
+
+## Ultimate Answer
+
+**Q: When does K₃ help synchronization?**
+A: In all-to-all mean-field, K₃>0 ALWAYS helps (all σ, all N, all frequency distributions). It increases both r and basin probability simultaneously.
+
+**Q: When does K₃ hinder synchronization?**
+A: K₃<0 always hinders. But the effect is weaker than K₂ changes.
+
+**Q: Why do different papers disagree?**
+A: **Topology matters.** All-to-all (our setting, Wang 2025) → K₃>0 always helps. Sparse/hypergraph (Zhang 2024, Muolo 2025) → K₃>0 can shrink basins. The three-body "winner-takes-all" mechanism is strongest in dense networks.
+
+**Q: Why does OA predict the wrong direction?**
+A: OA assumes continuous density and Z₂=Z₁². Neither holds for Gaussian. The finite-N "locked population expansion" mechanism is invisible to any continuous theory.
+
 ## Data Files (branch: sim/parameter-scan)
 
 | File | Description |
