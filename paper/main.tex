@@ -29,9 +29,8 @@
 \newcommand{\Order}{\mathcal{O}}
 \newcommand{\Kc}{K_{\mathrm{c}}}
 
-\title{Reconciling Contradictory Effects of Higher-Order Interactions \\
-on Kuramoto Synchronization: A Unified Phase Diagram \\
-via Ott--Antonsen Reduction}
+\title{Tail Heaviness Controls Explosive Synchronization: \\
+A Universal Formula for Higher-Order Kuramoto Models}
 
 \author{
   DataLab-atom Collaboration \\
@@ -43,26 +42,24 @@ via Ott--Antonsen Reduction}
 \maketitle
 
 \begin{abstract}
-Recent studies on the higher-order Kuramoto model---where three-body
-interactions supplement classical pairwise coupling---have reached seemingly
-contradictory conclusions: higher-order coupling $K_3$ can either promote or
-suppress synchronization depending on the metric considered.  We resolve this
-apparent paradox by deriving, for the first time, the \emph{complete}
-two-parameter phase diagram in the $(K_2, K_3)$ plane via an Ott--Antonsen
-reduction of the higher-order model in the thermodynamic limit $N\to\infty$.
-Our analytical framework yields three distinct critical manifolds---one for the
-onset of synchronization (critical coupling), one for the basin of attraction
-boundary, and one for the stability depth---which generically move in
-\emph{different directions} as $K_3$ varies.  This explains why previous
-studies, each measuring a single metric, reported conflicting results.
-Large-scale numerical simulations on $8\times$A800 GPUs with $N$ up to $10^4$
-oscillators across a four-dimensional $(K_2, K_3, \sigma, N)$ parameter space
-confirm the analytical predictions quantitatively.  We identify a previously
-unknown \emph{re-entrant synchronization} region where increasing $K_3$ first
-enhances and then destroys synchrony, and characterize its dependence on the
-frequency spread $\sigma$.  Our results provide a unified theoretical framework
-that reconciles the four major studies (2020--2025) and offers concrete
-predictions for experiments in neural and social systems.
+Recent studies on higher-order Kuramoto synchronization have reached
+contradictory conclusions about whether three-body coupling $K_3$ promotes or
+suppresses synchronization.  We resolve this paradox on two levels.  First, via
+Ott--Antonsen reduction, we show the contradictions arise from measuring
+different geometric features of a single radial potential---onset, basin size,
+and stability depth generically move in \emph{different directions} as $K_3$
+varies.  Second, and more fundamentally, we discover that the \emph{tail
+heaviness} of the frequency distribution qualitatively controls the phase
+diagram topology.  We derive a universal formula for the explosive
+synchronization threshold, $K_3^{\mathrm{exp}} = \Kc^3|g''(0)|/(8g(0))$,
+valid for any unimodal distribution $g(\omega)$: Lorentzian distributions
+(heavy tails) resist explosive transitions ($K_3^{\mathrm{exp}}=\Kc$), while
+Gaussian distributions are $\pi$ times more susceptible
+($K_3^{\mathrm{exp}}=\Kc/\pi$).  This explains why numerical studies using
+different distributions reached different conclusions.  GPU-accelerated
+simulations ($8\times$A800, $>10^5$ configurations) confirm these predictions
+quantitatively, including a re-entrant synchronization region for Gaussian
+distributions where increasing $K_3$ first creates then destroys synchrony.
 \end{abstract}
 
 
@@ -346,25 +343,36 @@ The bifurcation is:
   \item \textbf{Subcritical} (explosive/abrupt transition) when $K_2 < K_3$.
 \end{itemize}
 
-\begin{theorem}[Explosive synchronization boundary]
+\begin{theorem}[Universal explosive synchronization threshold]
 \label{thm:explosive}
-  The transition from supercritical to subcritical (explosive) synchronization
-  occurs along the line $K_3 = K_2$ in the $(K_2,K_3)$ parameter plane.
-  Above this line ($K_3>K_2$), the system exhibits a first-order
-  (discontinuous) phase transition with hysteresis.
+  For \emph{any} unimodal symmetric frequency distribution $g(\omega)$, the
+  synchronization transition becomes subcritical (explosive) when
+  \begin{equation}
+    \boxed{K_3 > K_3^{\mathrm{exp}}
+      \coloneqq \frac{\Kc^3\,|g''(0)|}{8\,g(0)}.}
+    \label{eq:K3-explosive-universal}
+  \end{equation}
+  For Lorentzian: $K_3^{\mathrm{exp}}=\Kc$ (the OA result $K_3=K_2$).
+  For Gaussian: $K_3^{\mathrm{exp}}=\Kc/\pi$, a factor $\pi$ lower.
+  For uniform: $K_3^{\mathrm{exp}}=0$ (any $K_3>0$ is explosive).
 \end{theorem}
 
 \begin{proof}
-  From the normal form \eqref{eq:cubic-normal}, the coefficient of $r^3$ is
-  $-\frac{1}{2}(K_2-K_3)$.  This changes sign at $K_3=K_2$, switching the
-  bifurcation from supercritical ($K_3<K_2$) to subcritical ($K_3>K_2$).
-  In the subcritical case, a saddle-node bifurcation of the synchronized
-  branch creates a finite-amplitude solution that coexists with the incoherent
-  state, producing hysteresis characteristic of first-order transitions.
+  The self-consistent equation near onset expands as $F(r)=c_1 r + c_3 r^3
+  + \Order(r^5)$ where $c_3 = K_3\pi g(0)/2 + \Kc^3\pi g''(0)/16$.
+  The bifurcation is subcritical when $c_3>0$, giving
+  \eqref{eq:K3-explosive-universal}.  For Lorentzian,
+  $|g''(0)|/g(0)=\pi/\sigma^2$, recovering the OA result $K_3^{\mathrm{exp}}
+  =\Kc$.  The normal form \eqref{eq:cubic-normal} is the special case for
+  Lorentzian where $c_3=-\frac{1}{2}(K_2-K_3)$.
 \end{proof}
 
-This result recovers and extends the finding of \citet{Skardal2020} that
-higher-order interactions promote ``abrupt synchronization switching.''
+\textbf{Physical interpretation}: heavy-tailed distributions maintain a
+reservoir of high-frequency oscillators that cannot be entrained, buffering
+the positive-feedback avalanche of cooperative three-body coupling.
+Lighter tails $\to$ weaker buffer $\to$ lower explosive threshold.
+This recovers \citet{Skardal2020}'s explosive synchronization and explains
+why it is more pronounced in Gaussian simulations.
 
 \subsection{Basin of attraction analysis}
 
@@ -754,11 +762,12 @@ networks; \citet{Dai2025} found 9 transitions at $N\!=\!3$; and
 
 We provided a unified framework for higher-order Kuramoto synchronization:
 (1)~the first OA reduction yielding scalar ODE~\eqref{eq:r-dynamics};
-(2)~three critical manifolds reconciling four contradictory studies;
-(3)~a re-entrant synchronization prediction;
-(4)~a $\sigma$-scaling law answering \citet{Muolo2025}'s open question;
-(5)~the mapping $K_3^{\mathrm{eff}}\!=\!K_2^2\tau/4$ delineating physically
-reachable regions; and (6)~validation via $>10^5$ GPU simulations.
+(2)~a universal explosive threshold $K_3^{\mathrm{exp}}\!=\!\Kc^3|g''(0)|/(8g(0))$
+showing tail heaviness controls phase transition type (\Cref{thm:explosive});
+(3)~three critical manifolds reconciling four contradictory studies;
+(4)~re-entrant synchronization confirmed for Gaussian distributions;
+(5)~the mapping $K_3^{\mathrm{eff}}\!=\!K_2^2\tau/4$ for time-delayed systems;
+and (6)~validation via $>10^5$ GPU simulations.
 
 
 \bibliography{references}
