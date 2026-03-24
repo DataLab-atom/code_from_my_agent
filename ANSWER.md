@@ -10,14 +10,13 @@
 
 **K₃ > 0 helps synchronization in 97% of parameter space** (K₂∈[0,5], σ∈[0.3,1.5]).
 
-**Apparent exceptions (3%, 20/672 points) are statistical noise, not real:**
-- All 20 "counter-examples" have basin=0.0 (every initial condition fails to sync)
-- In this region, r is from a single seed and fluctuates wildly (0.17→0.81 at adjacent K₃)
-- This is the chaotic critical region, not K₃ hurting sync
+**3% exceptions (20/672) split into two distinct mechanisms (KuramotoThinker analysis):**
+- **Case 1 (6 points): fluctuation noise** — small K₃<0.7, K₂≈Kc. Single-seed r fluctuates wildly. Not real K₃ effect.
+- **Case 2 (14 points): real bistability** — K₂<0.7·Kc (sub-critical) with K₃>0.4. K₃ creates a bistable pocket where system can get trapped in incoherent state. This is genuine but only occurs well below Kc.
 
 **K₃ < 0 always hurts.** Basin probability is NEVER reduced by K₃>0 (0/672).
 
-**Rule: K₃>0 helps synchronization. Period. Near Kc the effect is amplified but noisy.**
+**Rule: K₃>0 helps synchronization when K₂ > ~0.7·Kc. Below that, a bistable pocket exists where K₃>0 can trap the system.**
 
 Strongest evidence: K₃>0 **creates** sync where none existed (basin 0→>0) in 44% of sub-critical points, and **never destroys** existing sync (0/37 cases). This is the definitive test.
 
