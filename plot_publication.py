@@ -1,0 +1,380 @@
+"""
+论文级科研绘图 — 高阶 Kuramoto 相图可视化
+HaibiPlotAnalyst (agent-mn4l6mgq)
+
+支持功能：
+1. K₂×K₃ 相图矩阵（不同 σ 切片）— 序参量 r + 吸引域概率
+2. σ 效应曲线 — 固定 K₂ 下 r vs K₃
+3. 临界耦合偏移 — Kc vs σ（不同 K₃）
+4. 三指标联合面板 — r / basin / convergence time
+5. 相边界叠加解析预测（预留接口）
+"""
+
+import json
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
+from matplotlib import ticker
+import os
+
+# ─── 全局论文风格 ───
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.size": 10,
+    "axes.labelsize": 11,
+    "axes.titlesize": 12,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "legend.fontsize": 9,
+    "figure.dpi": 200,
+    "savefig.dpi": 300,
+    "savefig.bbox": "tight",
+    "axes.linewidth": 0.8,
+    "xtick.major.width": 0.6,
+    "ytick.major.width": 0.6,
+    "lines.linewidth": 1.5,
+    "axes.grid": False,
+})
+
+CMAP_R = "RdYlGn"
+CMAP_BASIN = "YlGnBu"
+CMAP_TC = "YlOrRd_r"
+FIG_DIR = "figures"
+
+
+def load_data(path="scan_sigma_K2_K3.json"):
+    """加载扫描数据，兼容 demo 和正式数据"""
+    with open(path) as f:
+        data = json.load(f)
+    return {
+        "sigma": np.array(data["sigma_list"]),
+        "K2": np.array(data["K2_list"]),
+        "K3": np.array(data["K3_list"]),
+        "r": np.array(data["r"]),
+        "tc": np.array(data["tc"]),
+        "basin": np.array(data["basin"]),
+        "N": data.get("N", 200),
+        "T": data.get("T", 100),
+    }
+
+
+def _ensure_dir():
+    os.makedirs(FIG_DIR, exist_ok=True)
+
+
+def _add_panel_label(ax, label, x=-0.12, y=1.06):
+    ax.text(x, y, label, transform=ax.transAxes,
+            fontsize=13, fontweight="bold", va="top")
+
+
+# ═══════════════════════════════════════════════════════════
+# Fig 1: K₂×K₃ 相图矩阵
+# ═══════════════════════════════════════════════════════════
+def fig1_phase_diagram_matrix(d, save=True):
+    """
+    对每个 σ 画 K₂×K₃ 热力图
+    上行: 序参量 r    下行: 吸引域概率 basin
+    """
+    _ensure_dir()
+    sigma, K2, K3 = d["sigma"], d["K2"], d["K3"]
+    r, basin = d["r"], d["basin"]
+    nS = len(sigma)
+
+    fig, axes = plt.subplots(2, nS, figsize=(3.2 * nS + 1, 6.5),
+                              gridspec_kw={"hspace": 0.35, "wspace": 0.15})
+    if nS == 1:
+        axes = axes.reshape(2, 1)
+
+    K3g, K2g = np.meshgrid(K3, K2)
+
+    # 理论临界线 Kc(σ)
+    Kc_theory = lambda s: 2.0 * np.sqrt(2 * np.pi) * s
+
+    for i, sig in enumerate(sigma):
+        # --- r ---
+        ax = axes[0, i]
+        im = ax.pcolormesh(K3g, K2g, r[i], cmap=CMAP_R, vmin=0, vmax=1,
+                           shading="auto", rasterized=True)
+        # 相边界等值线
+        ax.contour(K3g, K2g, r[i], levels=[0.3, 0.5, 0.7],
+                   colors=["0.2"], linewidths=[0.6, 1.0, 0.6],
+                   linestyles=["--", "-", "--"])
+        # 理论 Kc 水平线
+        Kc = Kc_theory(sig)
+        if Kc <= K2.max():
+            ax.axhline(Kc, color="white", ls=":", lw=0.8, alpha=0.8)
+            ax.text(K3[-1] * 0.9, Kc + 0.1, f"Kc={Kc:.1f}",
+                    color="white", fontsize=7, ha="right")
+        ax.set_title(f"$\\sigma={sig:.1f}$")
+        ax.set_xlabel("$K_3$")
+        if i == 0:
+            ax.set_ylabel("$K_2$")
+            _add_panel_label(ax, chr(65 + i))  # A, B, C...
+        else:
+            ax.set_yticklabels([])
+
+        # --- basin ---
+        ax2 = axes[1, i]
+        im2 = ax2.pcolormesh(K3g, K2g, basin[i], cmap=CMAP_BASIN, vmin=0, vmax=1,
+                              shading="auto", rasterized=True)
+        ax2.contour(K3g, K2g, basin[i], levels=[0.3, 0.5, 0.7],
+                    colors=["0.3"], linewidths=[0.6, 1.0, 0.6],
+                    linestyles=["--", "-", "--"])
+        ax2.set_xlabel("$K_3$")
+        if i == 0:
+            ax2.set_ylabel("$K_2$")
+        else:
+            ax2.set_yticklabels([])
+
+    # Colorbars
+    fig.colorbar(im, ax=axes[0, :].tolist(), label="Order parameter $r$",
+                 shrink=0.85, pad=0.02)
+    fig.colorbar(im2, ax=axes[1, :].tolist(), label="Basin probability",
+                 shrink=0.85, pad=0.02)
+
+    fig.suptitle(f"Higher-order Kuramoto: $K_2 \\times K_3$ phase diagrams ($N={d['N']}$)",
+                 fontsize=13, y=1.02)
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig1_phase_diagram_matrix.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
+# Fig 2: σ 效应曲线
+# ═══════════════════════════════════════════════════════════
+def fig2_sigma_effect(d, K2_targets=None, save=True):
+    """
+    固定若干 K₂ 值，画 r vs K₃ 曲线（不同 σ 用不同颜色）
+    """
+    _ensure_dir()
+    sigma, K2, K3, r = d["sigma"], d["K2"], d["K3"], d["r"]
+
+    if K2_targets is None:
+        # 取 3 个代表性 K₂：弱/中/强
+        idxs = [len(K2) // 4, len(K2) // 2, 3 * len(K2) // 4]
+    else:
+        idxs = [np.argmin(np.abs(K2 - t)) for t in K2_targets]
+
+    n_panels = len(idxs)
+    fig, axes = plt.subplots(1, n_panels, figsize=(4.5 * n_panels, 4),
+                              sharey=True, gridspec_kw={"wspace": 0.08})
+    if n_panels == 1:
+        axes = [axes]
+
+    colors = plt.cm.plasma(np.linspace(0.15, 0.85, len(sigma)))
+
+    for pi, (ax, ki) in enumerate(zip(axes, idxs)):
+        K2_val = K2[ki]
+        for si, (sig, c) in enumerate(zip(sigma, colors)):
+            ax.plot(K3, r[si, ki, :], color=c, lw=1.8,
+                    label=f"$\\sigma={sig:.1f}$", marker="o", ms=3)
+
+        ax.axvline(0, color="gray", ls="--", lw=0.6, alpha=0.5)
+        ax.axhline(0.5, color="gray", ls=":", lw=0.5, alpha=0.5)
+        ax.set_xlabel("$K_3$")
+        ax.set_title(f"$K_2 = {K2_val:.2f}$")
+        _add_panel_label(ax, chr(65 + pi))
+
+        if pi == 0:
+            ax.set_ylabel("Order parameter $r$")
+        if pi == n_panels - 1:
+            ax.legend(loc="upper left", framealpha=0.9, fontsize=8)
+
+        ax.set_ylim(-0.05, 1.05)
+        ax.grid(True, alpha=0.15)
+
+    fig.suptitle("Effect of $K_3$ on synchronization at different $\\sigma$",
+                 fontsize=13, y=1.02)
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig2_sigma_effect.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
+# Fig 3: 临界耦合偏移 Kc vs σ
+# ═══════════════════════════════════════════════════════════
+def fig3_Kc_shift(d, r_thresh=0.3, save=True):
+    """
+    对每个 σ 和若干 K₃ 值，找临界 K₂（r 跨越阈值的点）
+    与理论值 Kc = 2√(2π)σ 对比
+    """
+    _ensure_dir()
+    sigma, K2, K3, r = d["sigma"], d["K2"], d["K3"], d["r"]
+
+    def find_Kc(r_slice):
+        for j in range(len(K2) - 1):
+            if r_slice[j] < r_thresh <= r_slice[j + 1]:
+                # 线性插值
+                frac = (r_thresh - r_slice[j]) / (r_slice[j + 1] - r_slice[j])
+                return K2[j] + frac * (K2[j + 1] - K2[j])
+        return np.nan
+
+    # 选几个 K₃ 值
+    k3_targets = [0.0, 0.5, 1.0, -0.5, -1.0]
+    k3_idxs = {t: np.argmin(np.abs(K3 - t)) for t in k3_targets}
+
+    fig, ax = plt.subplots(figsize=(6, 4.5))
+
+    # 理论值
+    sig_fine = np.linspace(sigma.min(), sigma.max(), 100)
+    Kc_th = 2.0 * np.sqrt(2 * np.pi) * sig_fine
+    ax.plot(sig_fine, Kc_th, "k--", lw=2, label="Theory ($K_3=0$)", zorder=10)
+
+    markers = ["o", "s", "D", "^", "v"]
+    colors_k3 = plt.cm.coolwarm(np.linspace(0.1, 0.9, len(k3_targets)))
+
+    for ti, (k3t, mk, clr) in enumerate(zip(k3_targets, markers, colors_k3)):
+        ki = k3_idxs[k3t]
+        Kc_vals = [find_Kc(r[si, :, ki]) for si in range(len(sigma))]
+        ax.plot(sigma, Kc_vals, marker=mk, color=clr, lw=1.5, ms=6,
+                label=f"$K_3 = {k3t:+.1f}$")
+
+    ax.set_xlabel("$\\sigma$ (frequency spread)")
+    ax.set_ylabel("$K_c$ (critical coupling)")
+    ax.set_title("Critical coupling shift by higher-order interactions")
+    ax.legend(framealpha=0.9)
+    ax.grid(True, alpha=0.15)
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig3_Kc_shift.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
+# Fig 4: 三指标联合面板（固定 σ）
+# ═══════════════════════════════════════════════════════════
+def fig4_triple_metric(d, sigma_idx=None, save=True):
+    """
+    固定一个 σ，三列：r / basin / convergence time
+    """
+    _ensure_dir()
+    sigma, K2, K3 = d["sigma"], d["K2"], d["K3"]
+    r, basin, tc = d["r"], d["basin"], d["tc"]
+
+    if sigma_idx is None:
+        sigma_idx = len(sigma) // 2  # 取中间
+
+    sig = sigma[sigma_idx]
+    K3g, K2g = np.meshgrid(K3, K2)
+
+    fig, axes = plt.subplots(1, 3, figsize=(14, 4.2),
+                              gridspec_kw={"wspace": 0.25})
+
+    titles = ["Order parameter $r$", "Basin probability", "Convergence time"]
+    data_list = [r[sigma_idx], basin[sigma_idx], tc[sigma_idx]]
+    cmaps = [CMAP_R, CMAP_BASIN, CMAP_TC]
+    labels = ["$r$", "Probability", "Time"]
+
+    for pi, (ax, mat, cmap, title, lab) in enumerate(
+            zip(axes, data_list, cmaps, titles, labels)):
+        vmin = 0
+        vmax = 1 if pi < 2 else np.percentile(mat, 95)
+        im = ax.pcolormesh(K3g, K2g, mat, cmap=cmap, vmin=vmin, vmax=vmax,
+                           shading="auto", rasterized=True)
+        if pi < 2:
+            ax.contour(K3g, K2g, mat, levels=[0.3, 0.5, 0.7],
+                       colors=["0.2"], linewidths=[0.6, 1.0, 0.6],
+                       linestyles=["--", "-", "--"])
+        ax.set_xlabel("$K_3$")
+        if pi == 0:
+            ax.set_ylabel("$K_2$")
+        ax.set_title(title)
+        _add_panel_label(ax, chr(65 + pi))
+        fig.colorbar(im, ax=ax, label=lab, shrink=0.9)
+
+    fig.suptitle(f"Three synchronization metrics ($\\sigma = {sig:.1f}$, $N={d['N']}$)",
+                 fontsize=13, y=1.03)
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig4_triple_metric.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
+# Fig 5: "坑口窄但坑底深" 示意图
+# ═══════════════════════════════════════════════════════════
+def fig5_basin_vs_stability(d, save=True):
+    """
+    散点图：basin probability vs r，每个点是一个 (K₂, K₃) 组合
+    不同 σ 不同颜色，揭示 "更难达到但更稳定" 的现象
+    """
+    _ensure_dir()
+    sigma, r, basin = d["sigma"], d["r"], d["basin"]
+
+    fig, ax = plt.subplots(figsize=(6, 5))
+    colors = plt.cm.viridis(np.linspace(0.1, 0.9, len(sigma)))
+
+    for si, (sig, c) in enumerate(zip(sigma, colors)):
+        r_flat = r[si].flatten()
+        b_flat = basin[si].flatten()
+        # 只画有同步倾向的点
+        mask = r_flat > 0.1
+        ax.scatter(b_flat[mask], r_flat[mask], c=[c], s=12, alpha=0.5,
+                   label=f"$\\sigma={sig:.1f}$", edgecolors="none")
+
+    ax.set_xlabel("Basin probability (accessibility)")
+    ax.set_ylabel("Order parameter $r$ (stability)")
+    ax.set_title("Accessibility vs. Stability of synchronization")
+    ax.legend(markerscale=2, framealpha=0.9)
+    ax.set_xlim(-0.05, 1.05)
+    ax.set_ylim(-0.05, 1.05)
+
+    # 标注四象限
+    ax.text(0.75, 0.15, "Easy but\nunstable", ha="center", fontsize=8,
+            color="0.5", style="italic")
+    ax.text(0.15, 0.85, "Hard but\nstable", ha="center", fontsize=8,
+            color="0.5", style="italic")
+    ax.text(0.75, 0.85, "Easy &\nstable", ha="center", fontsize=8,
+            color="0.4", fontweight="bold")
+    ax.text(0.15, 0.15, "Hard &\nunstable", ha="center", fontsize=8,
+            color="0.5", style="italic")
+
+    ax.axhline(0.5, color="gray", ls=":", lw=0.5)
+    ax.axvline(0.5, color="gray", ls=":", lw=0.5)
+    ax.grid(True, alpha=0.1)
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig5_basin_vs_stability.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
+# 主入口
+# ═══════════════════════════════════════════════════════════
+def generate_all(data_path="scan_sigma_K2_K3.json"):
+    """一键生成全部论文图"""
+    d = load_data(data_path)
+    print(f"Data: σ={len(d['sigma'])}, K₂={len(d['K2'])}, K₃={len(d['K3'])}, N={d['N']}")
+
+    fig1_phase_diagram_matrix(d)
+    fig2_sigma_effect(d)
+    fig3_Kc_shift(d)
+    fig4_triple_metric(d)
+    fig5_basin_vs_stability(d)
+
+    print(f"\nAll figures saved to {FIG_DIR}/")
+
+
+if __name__ == "__main__":
+    import sys
+    path = sys.argv[1] if len(sys.argv) > 1 else "scan_sigma_K2_K3.json"
+    generate_all(path)
