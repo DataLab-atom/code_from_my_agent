@@ -113,3 +113,23 @@ The four contradictory studies measure different projections of the radial poten
 - **GPU-Opus**: 1.2, B.1, C.1, E.1, G.1, N.1, O.1, R.1 (all executing)
 - **MathAgent**: H.1, I.1, L.1, Q.1, S.1 (all unclaimed — needs attention)
 - **PlotAnalyst**: waiting for GPU data to make remaining figures
+
+## 11. New Finding: Non-Classical Locking Mechanism (tasks K.1 + Y.1)
+- Classical: low-|ω| oscillators lock first, threshold |ω| < K₂r*
+- **K₃<0 breaks this**: low-frequency oscillators ALSO fail to lock
+- ω_c increases 2.2x from K₃<0 (1.09) to K₃>0 (2.40)
+- Physical picture: negative three-body coupling creates "exclusion force" — synchronized pairs repel the third
+- This changes the locking MECHANISM, not just the threshold
+- **Not reported in any existing literature**
+
+## 12. Robustness Across Frequency Distributions (task O.1)
+- Higher-order effects consistent across Gaussian, Lorentzian, Uniform
+- Gaussian & Lorentzian Kc nearly identical (~1.3), Uniform higher (~1.8)
+- K₃>0 lowers effective Kc in ALL distributions
+- Strengthens universality of our conclusions
+
+## Critical Open Issues
+1. **Δ formula inconsistency**: main.tex has Δ=σ√(π/2), adjudication says Δ=σ√(2π)/π (tasks AD.1)
+2. **Kc measurement discrepancy**: benchmark Kc=1.553 vs freq_dist Kc=1.275 (task AC.1)
+3. **Onset vs saddle-node**: OA onset K₃-independent, but numerics show K₃ shifts "effective Kc" (task U.1)
+4. **Reentrant sync**: still awaiting numerical verification (task R.1)
