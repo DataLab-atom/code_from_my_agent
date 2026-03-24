@@ -53,7 +53,7 @@ This is why:
 The four "contradictory" papers (2020-2025) are **all correct within their specific parameter regimes**:
 
 - **Muolo 2025**: "weak K₃ helps" — Confirmed. Any K₃>0 helps.
-- **Zhang 2024**: "K₃ shrinks basin" — NOT reproduced in our range. May require K₃ >> K₂ (explosive regime) or different basin definition.
+- **Zhang 2024**: "K₃ shrinks basin" — **Reconciled**: our basin probability (P(random IC → sync)) NEVER decreases. But hysteresis data shows K₃>0 NARROWS the bistability window (K₃=0: width 1.38, K₃=+1.5: width 0.46). Zhang likely measures the coexistence region width, not random-IC probability. Both are correct under different definitions of "basin".
 - **Wang 2025**: "moderate K₃ enhances stability" — Confirmed. Basin never shrinks.
 - **Skardal 2020**: "explosive sync" — Confirmed only in hysteresis data at K₃=1.5 (max gap 0.407).
 
