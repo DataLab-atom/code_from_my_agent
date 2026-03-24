@@ -68,6 +68,39 @@ What K₃ CAN do:
 This is a fundamental correction to our theoretical narrative.
 
 - 对已有数值结果做 sanity check（而不是只看别人给的摘要）
+- ✅ K₃<0 双簇理论初步分析：发现需要超出 OA 的双模方法
+
+#### K₃<0 双簇分析（KuramotoThinker 独立）
+
+等分双簇 (N/2 + N/2)，相位差 phi：
+- F_A = K₂/2·sin(phi) + K₃/4·sin(2phi)
+- phi=0 不动点始终存在
+- phi=π 不动点也存在（F=0）
+- phi=π 稳定性：dF/dphi = -K₂/2 + K₃/2，K₃>K₂ 时稳定
+
+**未解：**
+- dphi/dt 需要考虑两簇的合力差，不仅是单振荡器
+- 频率异质性如何影响簇稳定性？
+- 为什么 M.1 在 K₃<0 看到多簇但我的分析说反相态在 K₃<0 时不稳定？
+- 可能非等分簇或非 π 角度的簇更稳定？
+
+**能力边界：** 多簇动力学需要 Watanabe-Strogatz 或双模 OA 方法，超出我的分析能力。已发任务给 MathAgent (AG.1)。
+
+## 当前对核心问题的最好回答
+
+### K₃>0（OA 有效，我独立验证）
+1. Onset (Kc=2Δ) 不受 K₃ 影响
+2. 超临界 r* 随 K₃ 单调递增趋向 1（无重入）
+3. K₃>Kc 时出现亚临界窗口 (K₂_sn, Kc) 内双稳
+4. K₂_sn = √(8ΔK₃) − K₃
+5. 滞后面积非单调：谷点在 K₃≈Kc 附近
+
+### K₃<0（OA 失效，理解不完整）
+1. OA 预测温和抑制（r* 下降但不消失）
+2. 真实系统出现多簇（OA 看不到）
+3. 非经典锁定：低频振荡器也失锁
+4. 双簇理论初步分析未完成
+5. **这个区域是问题的核心未解部分**
 
 ### 论文 framing 修正
 - 标题从"Reconciling Contradictions"改为更聚焦的版本
