@@ -35,7 +35,7 @@ Strongest evidence: K₃>0 **creates** sync where none existed (basin 0→>0) in
 | Convergence speed | Initial growth rate +33% (0.062→0.083/s) |
 | Locking threshold ω_c | 1.28 → 2.40 (widens locking range 1.9×) |
 
-### 2. Physical mechanism (from GPU FINDINGS + our data)
+### 2. Physical mechanism (KuramotoThinker analysis + GPU FINDINGS + our data)
 
 **"Winner-takes-all" amplification**: When some oscillators are already synchronized (forming a cluster at phase ψ), the three-body term effectively creates an additional pairwise pull toward ψ. The pull strength scales with the size of the existing cluster, creating **positive feedback**:
 
@@ -44,8 +44,10 @@ Strongest evidence: K₃>0 **creates** sync where none existed (basin 0→>0) in
 This is why:
 - K₃>0 always helps (positive feedback loop)
 - Effect is strongest near Kc (small clusters are most sensitive to amplification)
+  KuramotoThinker: delta_r ~ (dr*/dK_eff) × K₃r². Near Kc: dr*/dK diverges (critical amplification). Far from Kc: saturates. Product peaks at intermediate K₂.
 - Effect increases with N (larger clusters → stronger feedback)
 - K₃<0 creates negative feedback → always hurts
+- σ controls asymmetry: large σ → many oscillators near locking boundary → K₃ sign asymmetry amplified (ratio 1.14 at σ=0.3 → 3.36 at σ=1.2)
 
 ### 3. Why the literature contradicted itself
 
