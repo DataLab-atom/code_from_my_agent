@@ -1,0 +1,86 @@
+{
+  "K2": 2.0,
+  "sigma": 1.0,
+  "N": 200,
+  "T": 500.0,
+  "results": [
+    {
+      "K3": -1.0,
+      "r1": 0.502173599873544,
+      "r2": 0.21170653411388876,
+      "n_clusters": 1,
+      "cluster_sizes": [
+        200
+      ],
+      "phase_diff": null,
+      "anti_phase_detected": false
+    },
+    {
+      "K3": -1.5,
+      "r1": 0.5345103362295586,
+      "r2": 0.17572070140499518,
+      "n_clusters": 1,
+      "cluster_sizes": [
+        200
+      ],
+      "phase_diff": null,
+      "anti_phase_detected": false
+    },
+    {
+      "K3": -2.0,
+      "r1": 0.4345813741979001,
+      "r2": 0.09564560008442226,
+      "n_clusters": 1,
+      "cluster_sizes": [
+        200
+      ],
+      "phase_diff": null,
+      "anti_phase_detected": false
+    },
+    {
+      "K3": -2.5,
+      "r1": 0.34376856285454094,
+      "r2": 0.11657328793975957,
+      "n_clusters": 1,
+      "cluster_sizes": [
+        200
+      ],
+      "phase_diff": null,
+      "anti_phase_detected": false
+    },
+    {
+      "K3": -3.0,
+      "r1": 0.47653442773848415,
+      "r2": 0.12571313194572917,
+      "n_clusters": 1,
+      "cluster_sizes": [
+        200
+      ],
+      "phase_diff": null,
+      "anti_phase_detected": false
+    },
+    {
+      "K3": -4.0,
+      "r1": 0.3436103421530722,
+      "r2": 0.06456362198578278,
+      "n_clusters": 1,
+      "cluster_sizes": [
+        200
+      ],
+      "phase_diff": null,
+      "anti_phase_detected": false
+    },
+    {
+      "K3": -5.0,
+      "r1": 0.3857515046397065,
+      "r2": 0.059739325685842386,
+      "n_clusters": 1,
+      "cluster_sizes": [
+        200
+      ],
+      "phase_diff": null,
+      "anti_phase_detected": false
+    }
+  ],
+  "prediction": "anti-phase for K3 < -K2 = -2.0"
+}
