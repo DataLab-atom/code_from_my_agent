@@ -86,6 +86,46 @@ def oa_explosive_boundary(K2_arr):
     return K2_arr.copy()
 
 
+def oa_reentrant_r_star(K2, K3, Delta):
+    """
+    求给定 (K₂, K₃) 下的同步不动点 r*
+    解: Δ = (1-r²)/2·(K₂+K₃r²)  =>  K₃r⁴ - (K₂+K₃)r² + (K₂-2Δ) = 0
+    """
+    a = K3
+    b = -(K2 + K3)
+    c = K2 - 2 * Delta
+    if abs(a) < 1e-12:
+        if abs(b) < 1e-12:
+            return 0.0
+        u = -c / b
+        return np.sqrt(u) if 0 < u < 1 else 0.0
+    disc = b**2 - 4 * a * c
+    if disc < 0:
+        return 0.0
+    u1 = (-b + np.sqrt(disc)) / (2 * a)
+    u2 = (-b - np.sqrt(disc)) / (2 * a)
+    sols = [np.sqrt(u) for u in [u1, u2] if 0 < u < 1]
+    return max(sols) if sols else 0.0
+
+
+def oa_dr_dK3(K2, K3, sigma):
+    """
+    dr*/dK₃ at fixed K₂ (MathAgent Eq. reentrant)
+    = r*²(1-r*²) / [2·((K₂+3K₃r*²)(1-r*²) - 2r*²(K₂+K₃r*²))]
+    Sign change marks re-entrant boundary
+    """
+    Delta = oa_delta_gaussian(sigma)
+    r_star = oa_reentrant_r_star(K2, K3, Delta)
+    if r_star < 0.01:
+        return 0.0
+    r2 = r_star ** 2
+    numer = r2 * (1 - r2)
+    denom = 2 * ((K2 + 3 * K3 * r2) * (1 - r2) - 2 * r2 * (K2 + K3 * r2))
+    if abs(denom) < 1e-12:
+        return np.inf
+    return numer / denom
+
+
 def load_data(path="scan_sigma_K2_K3.json"):
     """加载扫描数据，兼容 demo 和正式数据"""
     with open(path) as f:
@@ -548,6 +588,84 @@ def fig7_analytic_vs_numeric(d, analytic_Kc_func=None, save=True):
 
 
 # ═══════════════════════════════════════════════════════════
+# Fig 8: Re-entrant 同步区域 (MathAgent Eq. reentrant)
+# ═══════════════════════════════════════════════════════════
+def fig8_reentrant(d, save=True):
+    """
+    在 K₂×K₃ 平面上标注 dr*/dK₃ 的符号变化
+    正值区域: K₃ 增强同步; 负值区域: K₃ 抑制同步
+    零等值线: re-entrant 边界
+    """
+    _ensure_dir()
+    sigma, K2, K3 = d["sigma"], d["K2"], d["K3"]
+    r = d["r"]
+
+    # 选中间 σ
+    si = len(sigma) // 2
+    sig = sigma[si]
+
+    K3g, K2g = np.meshgrid(K3, K2)
+    dr_dk3 = np.zeros_like(K3g)
+
+    for i in range(len(K2)):
+        for j in range(len(K3)):
+            dr_dk3[i, j] = oa_dr_dK3(K2[i], K3[j], sig)
+
+    # clip extreme values for visualization
+    vmax = np.percentile(np.abs(dr_dk3[np.isfinite(dr_dk3)]), 95)
+    dr_dk3 = np.clip(dr_dk3, -vmax, vmax)
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), gridspec_kw={"wspace": 0.3})
+
+    # Panel A: dr*/dK₃ heatmap
+    ax = axes[0]
+    im = ax.pcolormesh(K3g, K2g, dr_dk3, cmap="RdBu_r",
+                       vmin=-vmax, vmax=vmax, shading="auto", rasterized=True)
+    ax.contour(K3g, K2g, dr_dk3, levels=[0], colors=["k"], linewidths=[1.5])
+    # explosive boundary
+    k2_line = np.linspace(K2.min(), K2.max(), 100)
+    mask_ex = (k2_line >= K3.min()) & (k2_line <= K3.max())
+    if mask_ex.any():
+        ax.plot(k2_line[mask_ex], k2_line[mask_ex], "w:", lw=1, alpha=0.7,
+                label="Explosive: $K_3=K_2$")
+    fig.colorbar(im, ax=ax, label="$\\partial r^*/\\partial K_3$", shrink=0.9)
+    ax.set_xlabel("$K_3$")
+    ax.set_ylabel("$K_2$")
+    ax.set_title(f"Re-entrant map ($\\sigma={sig:.1f}$)")
+    ax.legend(fontsize=8, loc="lower right")
+    _add_panel_label(ax, "A")
+
+    # Panel B: numerical r overlaid with analytic boundaries
+    ax2 = axes[1]
+    ax2.pcolormesh(K3g, K2g, r[si], cmap=CMAP_R, vmin=0, vmax=1,
+                   shading="auto", rasterized=True)
+    # r=0.5 numerical contour
+    ax2.contour(K3g, K2g, r[si], levels=[0.5],
+                colors=["white"], linewidths=[1.5])
+    # re-entrant boundary (dr*/dK₃ = 0)
+    ax2.contour(K3g, K2g, dr_dk3, levels=[0],
+                colors=["yellow"], linewidths=[1.5], linestyles=["--"])
+    # OA onset
+    Kc = oa_Kc_onset(sig)
+    ax2.axhline(Kc, color="cyan", ls=":", lw=1, alpha=0.8)
+
+    ax2.set_xlabel("$K_3$")
+    ax2.set_ylabel("$K_2$")
+    ax2.set_title(f"Numerical $r$ + analytic boundaries ($\\sigma={sig:.1f}$)")
+    _add_panel_label(ax2, "B")
+
+    fig.suptitle("Re-entrant synchronization: $K_3$ first helps then hinders",
+                 fontsize=13, y=1.02)
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig8_reentrant.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
 # 主入口
 # ═══════════════════════════════════════════════════════════
 def generate_all(data_path="scan_sigma_K2_K3.json"):
@@ -562,6 +680,7 @@ def generate_all(data_path="scan_sigma_K2_K3.json"):
     fig5_basin_vs_stability(d)
     fig6_asymmetry(d)
     fig7_analytic_vs_numeric(d)
+    fig8_reentrant(d)
 
     print(f"\nAll figures saved to {FIG_DIR}/")
 
