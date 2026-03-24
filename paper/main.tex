@@ -409,6 +409,58 @@ satisfies \eqref{eq:fp-condition}.  Differentiating with respect to $K_3$:
 The denominator changes sign, marking the re-entrant boundary.  We denote this
 critical locus $K_3^{\mathrm{re}}(K_2,\sigma)$.
 
+\subsection{Dependence on frequency spread $\sigma$}
+
+The frequency spread $\sigma$ enters the radial dynamics \eqref{eq:r-dynamics}
+solely through $\Delta\approx\sigma\sqrt{\pi/2}$.  This allows us to
+characterize how the phase diagram deforms as $\sigma$ varies.
+
+\begin{proposition}[$\sigma$-scaling of phase boundaries]
+\label{prop:sigma-scaling}
+  Under the rescaling $K_2\to K_2/\Delta$, $K_3\to K_3/\Delta$, the radial
+  dynamics \eqref{eq:r-dynamics} become $\sigma$-independent:
+  \begin{equation}
+    \dot{r} = \Delta\left[-r + \frac{r(1-r^2)}{2}
+      \left(\frac{K_2}{\Delta} + \frac{K_3}{\Delta}r^2\right)\right].
+    \label{eq:rescaled}
+  \end{equation}
+  Consequently, all critical manifolds (onset, basin boundary, explosive line,
+  re-entrant locus) are straight rays through the origin in the
+  $(K_2/\sigma, K_3/\sigma)$ plane.
+\end{proposition}
+
+This scaling predicts that the phase diagram is \emph{self-similar} across
+$\sigma$ values: larger $\sigma$ merely stretches the diagram proportionally.
+Any apparent $\sigma$-dependence in the literature arises from studying
+\emph{unrescaled} parameters.
+
+\begin{corollary}[Critical $\sigma$ does not exist]
+  There is no critical frequency spread $\sigma^*$ at which the qualitative
+  effect of $K_3$ changes sign.  The ``contradictions'' across studies arise
+  from comparing different $(K_2,K_3)$ points relative to different $\sigma$
+  values, not from a genuine $\sigma$-dependent phase transition.
+\end{corollary}
+
+This answers the open question posed by \citet{Muolo2025}: the frequency
+distribution affects the \emph{scale} of the phase boundaries but not their
+\emph{topology}.
+
+\subsection{N=3 exact analysis and multiple transitions}
+
+For small systems, the Ott--Antonsen reduction (valid for $N\to\infty$) does
+not apply.  We complement our mean-field theory with an exact analysis of the
+$N=3$ case, where up to 9 synchronization transitions have been
+reported~\citep{Dai2025}.
+
+For $N=3$ with phases $\theta_1,\theta_2,\theta_3$, the phase differences
+$\varphi_1=\theta_2-\theta_1$, $\varphi_2=\theta_3-\theta_1$ satisfy a
+two-dimensional ODE that we analyze via numerical continuation
+(see \texttt{three\_oscillator\_bifurcation.py} in the supplementary code).
+The multiple transitions arise from the interplay between the pairwise and
+three-body terms creating nested stable and unstable manifolds in the
+$(\varphi_1,\varphi_2)$ torus---a finite-size effect absent in the
+thermodynamic limit.
+
 
 %% ============================================================
 \section{Numerical Validation}
