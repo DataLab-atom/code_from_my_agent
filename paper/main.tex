@@ -924,4 +924,50 @@ $K_3^{\mathrm{eff}} = (K_2-K_2^{\mathrm{eff}})/2$ with $K_3^{\mathrm{eff}}\ge 0$
 forming a triangle in the $(K_2^{\mathrm{eff}}, K_3^{\mathrm{eff}})$ plane.
 
 
+\section{Noise Effects and Fokker--Planck Analysis}
+\label{app:fokker-planck}
+
+Adding Gaussian white noise of intensity $\eta$:
+\begin{equation}
+  \dd\theta_i = \bigl[v_i\bigr]\dd t + \sqrt{2\eta}\,\dd W_i,
+\end{equation}
+where $v_i$ is the deterministic velocity field and $W_i$ are independent
+Wiener processes.  The single-oscillator density satisfies the Fokker--Planck
+equation
+\begin{equation}
+  \frac{\partial f}{\partial t}
+  + \frac{\partial}{\partial\theta}(f\,v)
+  = \eta\,\frac{\partial^2 f}{\partial\theta^2}.
+\end{equation}
+
+On the OA manifold, the noise adds exponential decay to each Fourier mode
+($\sim\ee^{-n^2\eta t}$), yielding the modified $\alpha$-equation:
+\begin{equation}
+  \dot{\alpha} = -(\ii\omega + \eta)\alpha
+  + \tfrac{1}{2}\bigl[H - \bar{H}\alpha^2\bigr].
+\end{equation}
+
+\paragraph{Key result.} For the Lorentzian distribution, noise simply shifts
+$\Delta\to\Delta+\eta$ in the radial ODE:
+\begin{equation}
+  \boxed{
+  \dot{r} = -(\Delta+\eta)\,r + \frac{r(1-r^2)}{2}(K_2 + K_3 r^2).
+  }
+\end{equation}
+All critical manifolds shift uniformly: $\Kc(\eta) = 2(\Delta+\eta)$,
+while the explosive boundary $K_3=K_2$ and the closure ratio $c[g]$
+remain noise-independent.  Noise acts as ``effective frequency spread,''
+making synchronization harder but not changing the transition type.
+
+\paragraph{L\'evy noise.} For L\'evy noise with stability index
+$\alpha_L\in(0,2)$, the $n$-th Fourier mode decays as
+$\ee^{-|n|^{\alpha_L}\eta_L t}$ instead of $\ee^{-n^2\eta t}$.
+For the first-order parameter $r_1$, the equation retains the same form
+with $\Delta\to\Delta+\eta_L$.  However, higher harmonics ($r_2$, $r_3$)
+decay faster when $\alpha_L<2$ (heavy-tailed noise preferentially disrupts
+higher modes), breaking the $Z_2=Z_1^2$ relation more strongly than Gaussian
+noise.  This provides a theoretical explanation for the ``extreme
+synchronization transitions'' reported by~\citet{Lee2025}.
+
+
 \end{document}
