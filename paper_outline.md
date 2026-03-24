@@ -133,3 +133,19 @@ The four contradictory studies measure different projections of the radial poten
 2. **Kc measurement discrepancy**: benchmark Kc=1.553 vs freq_dist Kc=1.275 (task AC.1)
 3. **Onset vs saddle-node**: OA onset K₃-independent, but numerics show K₃ shifts "effective Kc" (task U.1)
 4. **Reentrant sync**: still awaiting numerical verification (task R.1)
+
+## CORRECTION: Reentrant Sync Prediction Re-examined (Reflection 20)
+**I may have misinterpreted the OA prediction.**
+- OA steady-state: K₃u² − (K₃−K₂)u + (2Δ−K₂) = 0, u=r²
+- For K₂>2Δ and K₃>0: one positive root u₊ always exists
+- As K₃→∞: u₊→1⁻ (r*→1), NOT r*→0
+- MathAgent's "reentrant" = dr*/dK₃ sign change, not r*→0
+- So r* may PLATEAU or SLOWLY DECREASE at large K₃, not crash to 0
+- R.1 results will clarify, but expectations should be adjusted
+- This nuance matters: "reentrant" in the literature means full loss of order, which may NOT happen here
+
+## OA Validity Caveat (Reflection 18)
+- AB.1 found OA reliable in only ~5% of parameter space
+- BUT: if Δ formula is wrong (AD.1 pending), OA deviation map is invalid
+- Must redo AB.1 after Δ is confirmed
+- Cascade error risk: Δ mistake propagates to ALL OA comparisons
