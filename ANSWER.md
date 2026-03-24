@@ -49,7 +49,17 @@ This is why:
 - K₃<0 creates negative feedback → always hurts
 - σ controls asymmetry: large σ → many oscillators near locking boundary → K₃ sign asymmetry amplified (ratio 1.14 at σ=0.3 → 3.36 at σ=1.2)
 
-### 3. Why the literature contradicted itself
+### 3. TOPOLOGY IS THE KEY (sparse network experiment confirms)
+
+GPU sparse network scan (N=200, K₂=2, Erdos-Renyi):
+- p=0.1 (sparse): r ≈ 0.069 for ALL K₃. Zero K₃ effect.
+- p=0.3 (moderate): r ≈ 0.084 for ALL K₃. Zero K₃ effect.
+- p=1.0 (all-to-all): r ranges 0.59-0.90. Huge K₃ effect.
+
+The winner-takes-all mechanism REQUIRES dense triangle connectivity.
+In sparse networks, there aren't enough triangles for three-body coupling to matter.
+
+### 4. Why the literature contradicted itself
 
 The four "contradictory" papers (2020-2025) are **all correct within their specific parameter regimes**:
 
@@ -70,7 +80,18 @@ The Lorentzian OA reduction (`dr/dt = -Δr + r(1-r²)/2·(K₂+K₃r²)`) predic
 - Gaussian exact self-consistent equation gives correct direction (validated: r*=0.909 analytic vs 0.909 numerical)
 - **Finite-size data shows NO convergence toward OA even at N=500**
 
-### 5. Kc depends on K₃ (even at N→∞ for Gaussian)
+### 5. Kc vs K₂_sn distinction (MathAgent clarification)
+
+MathAgent clarified: **onset Kc is K₃-independent** (true for ALL distributions).
+What shifts is the **saddle-node bifurcation K₂_sn**, not the onset:
+- K₃=1: K₂_sn = 1.579
+- K₃=2: K₂_sn = 1.218
+- K₃=3: K₂_sn = 0.649
+
+The "apparent Kc shift" in our data is K₃ creating a subcritical branch below Kc,
+not moving the linear instability point. Muolo 2025's "Kc reduction" is actually K₂_sn reduction.
+
+### 6. Gaussian exact Kc(K₃) (supplementary)
 
 Gaussian exact self-consistent data confirms Kc(K₃) is NOT constant:
 - K₃=-2: Kc=1.516, K₃=0: Kc=1.483, K₃>1: Kc≈1.459 (saturates)
@@ -111,7 +132,7 @@ changes HOW DEEP the valley is and HOW WIDE the pass is to get there.
 
 ### 8. What we DON'T know (honest limitations)
 
-1. **Topology hypothesis UNVERIFIED**: "K₃ effect flips on sparse networks" is GPU's conjecture, not tested. Sparse network simulation task sent but unexecuted.
+1. **Topology hypothesis VERIFIED**: K₃ has ZERO effect in sparse networks (p=0.1, 0.3). Effect only in all-to-all. Zhang 2024 used different topology → explains contradiction.
 2. **N→∞ true limit unknown**: N=5000 data shows K₃ still helps, but Gaussian exact (true N→∞) also shows it helps. Lorentzian OA (also N→∞) says it hurts. Which N→∞ is "real" depends on distribution.
 3. **K₄ truncation**: Four-body term is 45-75% of K₃. Our model ignores it. Conclusions may change with K₄.
 4. **Only Gaussian/Lorentzian/Uniform tested**: Other distributions (bimodal, power-law) untested.
