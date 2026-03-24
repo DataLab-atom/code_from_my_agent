@@ -87,8 +87,13 @@ Verification against locking_order.json (K₂=3, σ=1, N=200):
 - K₃=+1: ω_c(theory)=3.33, locked(actual)=168, locked(predicted)=200
 
 Direction correct, magnitude overestimated (~75-84% agreement).
-The formula captures the essential physics: K₃ modifies the effective coupling
-strength that determines which oscillators can frequency-lock.
+
+Empirical sigmoid fit gives correction factor:
+- K₃=-1: ω_c(fit)/ω_c(theory) = 0.72
+- K₃=0: ratio = 0.63
+- K₃=+1: ratio = 0.55
+Theory systematically overestimates, and more so at larger K₃.
+The formula captures the qualitative physics but needs a K₃-dependent correction.
 
 ### 7. Why OA misses the K₃ effect at onset (pseudopotential analysis)
 
