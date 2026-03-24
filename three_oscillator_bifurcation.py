@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
     print(f"K2 in [0, 10], {len(K2_range)} points")
     print(f"K3 values: {K3_values}")
-    print(f"ω_diff = {omega_diff}")
+    print(f"omega_diff = {omega_diff}")
     print()
 
     results = scan_bifurcation(K2_range, K3_values, omega_diff,
