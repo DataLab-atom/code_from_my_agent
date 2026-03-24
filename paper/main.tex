@@ -638,6 +638,23 @@ Three important consequences follow:
     \emph{not} typically observed in time-delayed Kuramoto systems.
 \end{enumerate}
 
+\subsection{Limitations and four-body effects}
+
+Our analysis truncates the interaction hierarchy at three-body terms.
+Numerical experiments (see supplementary \texttt{K4\_test.json}) show that
+adding a four-body coupling $K_4$ at $\Order(\tau^2)$ in the time-delay
+expansion produces a $\sim$12\% variation in $r_1$ for $K_4\in[-1,1]$ at
+$N=50$.  While this effect diminishes with increasing $N$ (the four-body term
+scales as $N^{-3}$), it suggests that for applications where quantitative
+accuracy matters---particularly in small networks---the four-body contribution
+should not be neglected.
+
+Additionally, the Ott--Antonsen reduction assumes all-to-all coupling.
+For sparse networks or hypergraphs, the mean-field approximation breaks down,
+and network topology introduces additional degrees of freedom that our
+framework does not capture.  Extending the analysis to structured
+networks~\citep{Muolo2025} remains an important direction.
+
 
 %% ============================================================
 \section{Related Work}
