@@ -727,6 +727,13 @@ bifurcation analysis is needed.  (1b)~The closure ratio $c[g]$ is computed
 in the $r\to 0$ limit; at finite~$r$, $Z_2/Z_1^2$ varies (e.g., from
 $2/\pi$ at onset to $\approx 0.8$ at $r=0.85$ for Gaussian), so the
 corrected self-consistent equation requires the full $Z_2(h)$ function.
+(1c)~The corrected self-consistent equation is validated against
+$N\!=\!500$ GPU simulations: error $<3\%$ for $\sigma\le 1.0$,
+$12$--$17\%$ at $\sigma\!=\!1.2$ (near-critical finite-$N$ effects),
+and qualitative failure at $\sigma\!=\!1.5$ where finite-$N$ fluctuations
+sustain subcritical synchronization ($r\!\approx\!0.2$) absent in the
+$N\!\to\!\infty$ theory.  The practical validity range is
+$\sigma \lesssim K_2\pi/(2\sqrt{2\pi})$.
 (2)~The three-body truncation requires $K_4 r^4/(K_3 r^2+K_2)\ll 1$;
 near the explosive boundary, four-body terms ($\sim$12\% at $N\!=\!50$) can
 matter.  The OA reduction also assumes all-to-all coupling; sparse
