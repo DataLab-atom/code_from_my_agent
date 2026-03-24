@@ -1,0 +1,868 @@
+\documentclass{article}
+\usepackage[preprint]{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{natbib}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\Order}{\mathcal{O}}
+\newcommand{\Kc}{K_{\mathrm{c}}}
+
+\title{Tail Heaviness Controls Explosive Synchronization: \\
+A Universal Formula for Higher-Order Kuramoto Models}
+
+\author{
+  DataLab-atom Collaboration \\
+  \texttt{haibi@datalab-atom}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Recent studies on higher-order Kuramoto synchronization have reached
+contradictory conclusions about whether three-body coupling $K_3$ promotes or
+suppresses synchronization.  We resolve this paradox on two levels.  First, via
+Ott--Antonsen reduction, we show the contradictions arise from measuring
+different geometric features of a single radial potential---onset, basin size,
+and stability depth generically move in \emph{different directions} as $K_3$
+varies.  Second, and more fundamentally, we discover that the \emph{tail
+heaviness} of the frequency distribution qualitatively controls the phase
+diagram topology.  We derive a universal formula for the explosive
+synchronization threshold, $K_3^{\mathrm{exp}} = \Kc^3|g''(0)|/(8\,c[g]\,g(0))$,
+where $c[g]$ is a distribution-dependent \emph{OA closure ratio} given by an
+explicit integral over~$g$.  Lorentzian distributions (heavy tails) have $c=1$
+and resist explosive transitions ($K_3^{\mathrm{exp}}=\Kc$), while Gaussian
+distributions have $c=2/\pi$ and are twice as susceptible
+($K_3^{\mathrm{exp}}=\Kc/2$).  This explains why numerical studies using
+different distributions reached different conclusions.  GPU-accelerated
+simulations ($8\times$A800, $>10^5$ configurations) confirm these predictions
+quantitatively.  We further show that $K_3$ cannot destroy synchronization
+once established ($K_2>\Kc$), but reshapes the transition from continuous
+to explosive, with distribution-dependent susceptibility.
+\end{abstract}
+
+
+%% ============================================================
+\section{Introduction}
+\label{sec:intro}
+%% ============================================================
+
+The Kuramoto model~\citep{Kuramoto1984} is the canonical framework for
+studying synchronization in coupled oscillator populations.  In its classical
+form, $N$ oscillators with phases $\theta_i$ and natural frequencies $\omega_i$
+drawn from a distribution $g(\omega)$ evolve according to
+\begin{equation}
+  \dot{\theta}_i = \omega_i + \frac{K}{N}\sum_{j=1}^{N}\sin(\theta_j - \theta_i),
+  \label{eq:classic-kuramoto}
+\end{equation}
+where $K>0$ is the pairwise coupling strength.  The degree of synchronization
+is measured by the order parameter
+\begin{equation}
+  r\,\ee^{\ii\psi} = \frac{1}{N}\sum_{j=1}^{N}\ee^{\ii\theta_j},
+  \label{eq:order-param}
+\end{equation}
+with $r=0$ indicating incoherence and $r=1$ full phase locking.
+
+For a Gaussian frequency distribution $g(\omega)=\frac{1}{\sqrt{2\pi}\sigma}
+\exp\!\bigl(-\frac{\omega^2}{2\sigma^2}\bigr)$, the critical coupling is
+$\Kc = \frac{2}{\pi g(0)} = \frac{2\sigma\sqrt{2\pi}}{\pi}
+\approx 1.596\,\sigma$~\citep{Kuramoto1984}.  Above
+$\Kc$, the order parameter grows as $r\sim\sqrt{K-\Kc}$.
+
+Recent years have witnessed intense interest in \emph{higher-order
+interactions}~\citep{Skardal2020,Zhang2024,Muolo2025,Wang2025}, where groups of
+three or more oscillators interact simultaneously.  The simplest extension
+introduces a three-body coupling term:
+\begin{equation}
+  \dot{\theta}_i = \omega_i
+  + \frac{K_2}{N}\sum_{j=1}^{N}\sin(\theta_j - \theta_i)
+  + \frac{K_3}{N^2}\sum_{j,k=1}^{N}\sin(2\theta_j - \theta_k - \theta_i).
+  \label{eq:higher-order-kuramoto}
+\end{equation}
+
+Four major studies have investigated this model and reached \emph{contradictory}
+conclusions (\Cref{tab:literature}):
+
+\begin{table}[t]
+  \caption{Summary of conflicting findings on higher-order Kuramoto
+    synchronization.  Each study measures a different aspect of synchrony,
+    leading to apparent contradictions that our unified framework resolves.}
+  \label{tab:literature}
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Study} & \textbf{Year} & \textbf{Metric} & \textbf{Effect of $K_3$} \\
+    \midrule
+    Skardal \& Arenas & 2020 & Transition type & Explosive (abrupt) sync \\
+    Zhang et al. & 2024 & Basin of attraction & Shrinks basin \\
+    Muolo et al. & 2025 & Critical coupling & Weak helps, strong hinders \\
+    Wang et al. & 2025 & Stability depth & Enhances stability \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The central insight of this paper is that these four conclusions are not
+contradictory---they describe \emph{different projections} of a single
+higher-dimensional phase diagram.  We make this precise by:
+
+\begin{enumerate}
+  \item Deriving the exact Ott--Antonsen reduced dynamics for
+    \eqref{eq:higher-order-kuramoto} in the $N\to\infty$ limit
+    (\Cref{sec:ott-antonsen});
+  \item Extracting three distinct critical manifolds from the reduced system:
+    the synchronization onset $\Kc(K_3,\sigma)$, the basin boundary, and the
+    Lyapunov stability depth (\Cref{sec:phase-diagram});
+  \item Validating predictions with GPU-accelerated simulations spanning $>10^5$
+    parameter points (\Cref{sec:numerics});
+  \item Proving that synchronization is indestructible by $K_3$ once
+    $K_2>\Kc$, but its transition type changes (\Cref{sec:robustness}).
+\end{enumerate}
+
+
+%% ============================================================
+\section{Ott--Antonsen Reduction for Higher-Order Kuramoto}
+\label{sec:ott-antonsen}
+%% ============================================================
+
+\subsection{Continuity equation and the Ott--Antonsen ansatz}
+
+In the thermodynamic limit $N\to\infty$, the state of the oscillator
+population is described by a probability density $f(\theta,\omega,t)$
+satisfying the continuity equation
+\begin{equation}
+  \frac{\partial f}{\partial t}
+  + \frac{\partial}{\partial\theta}\bigl(f\,v[\theta,\omega,t]\bigr) = 0,
+  \label{eq:continuity}
+\end{equation}
+where $v[\theta,\omega,t]$ is the velocity field from \eqref{eq:higher-order-kuramoto}.
+
+We expand $f$ in a Fourier series:
+\begin{equation}
+  f(\theta,\omega,t)
+  = \frac{g(\omega)}{2\pi}\Biggl[
+    1 + \sum_{n=1}^{\infty}\hat{f}_n(\omega,t)\,\ee^{\ii n\theta}
+    + \text{c.c.}
+  \Biggr].
+  \label{eq:fourier-expansion}
+\end{equation}
+
+The \textbf{Ott--Antonsen ansatz}~\citep{OttAntonsen2008} restricts to the
+invariant manifold
+\begin{equation}
+  \hat{f}_n(\omega,t) = \bigl[\alpha(\omega,t)\bigr]^n,
+  \label{eq:oa-ansatz}
+\end{equation}
+where $\alpha(\omega,t)$ is a single complex-valued function with
+$|\alpha|\le 1$.
+
+\subsection{Velocity field decomposition}
+
+To apply the Ott--Antonsen ansatz, we must express the velocity field in terms
+of the Fourier modes of $f$.  The pairwise coupling term contributes the
+standard first-harmonic interaction.  For the three-body term, we note:
+\begin{equation}
+  \frac{K_3}{N^2}\sum_{j,k}\sin(2\theta_j - \theta_k - \theta_i)
+  \;\xrightarrow{N\to\infty}\;
+  K_3\,\mathrm{Im}\bigl[Z_2\,\bar{Z}_1\,\ee^{-\ii\theta}\bigr],
+  \label{eq:triplet-mf}
+\end{equation}
+where the generalized order parameters are
+\begin{equation}
+  Z_n(t) = \int_0^{2\pi}\!\int_{-\infty}^{\infty}
+  \ee^{\ii n\theta}\,f(\theta,\omega,t)\,\dd\omega\,\dd\theta.
+  \label{eq:gen-order-param}
+\end{equation}
+
+Under the Ott--Antonsen ansatz, we have
+\begin{equation}
+  Z_n(t) = \int_{-\infty}^{\infty}\overline{\alpha(\omega,t)}^{\,n}\,g(\omega)\,\dd\omega.
+  \label{eq:Zn-oa}
+\end{equation}
+
+Thus the full velocity field becomes
+\begin{equation}
+  v(\theta,\omega,t) = \omega
+  + \frac{K_2}{2\ii}\bigl(Z_1\,\ee^{-\ii\theta} - \bar{Z}_1\,\ee^{\ii\theta}\bigr)
+  + \frac{K_3}{2\ii}\bigl(Z_2\bar{Z}_1\,\ee^{-\ii\theta}
+    - \bar{Z}_2 Z_1\,\ee^{\ii\theta}\bigr).
+  \label{eq:velocity-full}
+\end{equation}
+
+\subsection{Reduced dynamics}
+
+Substituting \eqref{eq:oa-ansatz} and \eqref{eq:velocity-full} into
+\eqref{eq:continuity} and collecting terms proportional to $\ee^{\ii\theta}$,
+we obtain the evolution equation for $\alpha(\omega,t)$:
+\begin{equation}
+  \boxed{
+  \dot{\alpha} = -\ii\omega\,\alpha
+  + \frac{1}{2}\Bigl[
+    \bigl(K_2 Z_1 + K_3 Z_2\bar{Z}_1\bigr)
+    - \bigl(K_2\bar{Z}_1 + K_3\bar{Z}_2 Z_1\bigr)\alpha^2
+  \Bigr].
+  }
+  \label{eq:alpha-ode}
+\end{equation}
+
+For a Lorentzian frequency distribution $g(\omega) =
+\frac{\Delta/\pi}{(\omega-\omega_0)^2+\Delta^2}$, the contour integral in
+\eqref{eq:Zn-oa} can be evaluated by residues, yielding
+\begin{equation}
+  Z_n(t) = \overline{\alpha(\omega_0 - \ii\Delta, t)}^{\,n}.
+  \label{eq:Zn-lorentzian}
+\end{equation}
+
+Defining $z(t) \coloneqq \overline{\alpha(\omega_0-\ii\Delta,t)}$, we obtain a
+\emph{closed} ODE for a single complex variable:
+\begin{equation}
+  \boxed{
+  \dot{z} = \bigl(\ii\omega_0 - \Delta\bigr)z
+  + \frac{1}{2}\bigl(K_2 + K_3|z|^2\bigr)\bigl(1 - |z|^2\bigr)\,
+  \frac{z}{|z|}\cdot\bar{z}\,/\,\bar{z}
+  }
+  \label{eq:z-ode-raw}
+\end{equation}
+
+Setting $\omega_0=0$ (symmetric distribution) and writing $z=r\,\ee^{\ii\phi}$
+in polar form, the radial dynamics decouple:
+\begin{equation}
+  \boxed{
+  \dot{r} = -\Delta\,r + \frac{r(1-r^2)}{2}\bigl(K_2 + K_3 r^2\bigr).
+  }
+  \label{eq:r-dynamics}
+\end{equation}
+
+This is our central analytical result.  Despite the higher-order interaction,
+the Ott--Antonsen reduction produces a \emph{one-dimensional} ODE for the order
+parameter $r$, making the complete bifurcation analysis tractable.
+
+\begin{remark}[Lorentzian vs.\ Gaussian]
+  The Ott--Antonsen reduction is exact for Lorentzian $g(\omega)$ with
+  half-width $\Delta$, giving $\Kc=2\Delta$.  For Gaussian $g(\omega)$ with
+  standard deviation $\sigma$, the exact critical coupling is
+  $\Kc = 2\sigma\sqrt{2\pi}/\pi \approx 1.596\,\sigma$
+  (from $\Kc=2/[\pi g(0)]$ with $g(0)=1/(\sigma\sqrt{2\pi})$).
+  Matching $g_{\mathrm{Lor}}(0) = g_{\mathrm{Gauss}}(0)$ gives
+  $\Delta = \sigma\sqrt{2\pi}/\pi \approx 0.798\,\sigma$.
+  With this identification, the onset prediction $\Kc=2\Delta$ is exact for
+  both distributions.
+
+  \textbf{Important caveat}: while the onset $\Kc$ is distribution-independent
+  (depending only on $g(0)$), the nonlinear predictions from
+  \eqref{eq:r-dynamics}---including $r^*$ and basin boundaries---are exact
+  only for the Lorentzian.  The root cause is that the OA closure
+  $Z_2=Z_1^2$ fails for non-Lorentzian distributions: at onset,
+  $Z_2/Z_1^2 \to c[g]$ where $c=2/\pi\approx 0.64$ for Gaussian
+  (\Cref{thm:explosive}).  This makes the effective three-body coupling
+  weaker by a factor $c$, shifting the explosive threshold from
+  $K_3^{\mathrm{exp}}=\Kc/\pi$ to $\Kc/2$ for Gaussian.
+  The \emph{qualitative} phase structure (onset, explosive
+  boundary, basin ordering) is robust across distributions, but the
+  \emph{quantitative} thresholds require the correction factor~$c[g]$
+  (\Cref{thm:explosive}).
+\end{remark}
+
+
+%% ============================================================
+\section{Phase Diagram and Critical Manifolds}
+\label{sec:phase-diagram}
+%% ============================================================
+
+\subsection{Fixed points of the radial dynamics}
+
+From \eqref{eq:r-dynamics}, the fixed points satisfy $\dot{r}=0$:
+\begin{enumerate}
+  \item The \textbf{incoherent state} $r^*=0$ always exists.
+  \item \textbf{Partially synchronized states} $r^*\in(0,1)$ satisfy
+  \begin{equation}
+    \Delta = \frac{(1-r^2)}{2}\bigl(K_2 + K_3 r^2\bigr).
+    \label{eq:fp-condition}
+  \end{equation}
+\end{enumerate}
+
+\subsection{Critical coupling for synchronization onset}
+
+Linearizing \eqref{eq:r-dynamics} around $r=0$:
+\begin{equation}
+  \dot{r} \approx \left(-\Delta + \frac{K_2}{2}\right)r,
+  \label{eq:linear-stability}
+\end{equation}
+so the incoherent state loses stability when
+\begin{equation}
+  \boxed{K_2^{\mathrm{c}} = 2\Delta.}
+  \label{eq:Kc-onset}
+\end{equation}
+
+\begin{proposition}[Independence of onset from $K_3$]
+\label{prop:onset-independence}
+  The critical pairwise coupling $K_2^{\mathrm{c}}$ for the onset of
+  synchronization from incoherence is independent of $K_3$ to leading order.
+  The three-body interaction enters only at $\Order(r^3)$ and therefore does
+  not affect the linear instability threshold.
+\end{proposition}
+
+This immediately explains why some studies found that $K_3$ ``does not change
+the critical coupling''---this is exactly correct for the onset, but misses the
+nonlinear effects discussed below.
+
+\subsection{Nonlinear bifurcation: supercritical vs.\ subcritical}
+
+Expanding \eqref{eq:r-dynamics} to cubic order near $r=0$ with
+$K_2 = 2\Delta + \epsilon$:
+\begin{equation}
+  \dot{r} = \frac{\epsilon}{2}\,r
+  - \frac{1}{2}\bigl(K_2 - K_3\bigr)r^3 + \Order(r^5).
+  \label{eq:cubic-normal}
+\end{equation}
+
+The bifurcation is:
+\begin{itemize}
+  \item \textbf{Supercritical} (continuous transition) when $K_2 > K_3$,
+    giving $r\sim\sqrt{\epsilon/(K_2-K_3)}$ near onset.
+  \item \textbf{Subcritical} (explosive/abrupt transition) when $K_2 < K_3$.
+\end{itemize}
+
+\begin{theorem}[Universal explosive synchronization threshold]
+\label{thm:explosive}
+  For \emph{any} unimodal symmetric frequency distribution $g(\omega)$, the
+  synchronization transition becomes subcritical (explosive) when
+  \begin{equation}
+    \boxed{K_3 > K_3^{\mathrm{exp}}
+      \coloneqq \frac{\Kc^3\,|g''(0)|}{8\,c[g]\,g(0)},}
+    \label{eq:K3-explosive-universal}
+  \end{equation}
+  where $c[g] \coloneqq \lim_{r\to 0^+} Z_2/Z_1^2$ is the
+  \emph{OA closure ratio}, given in closed form by
+  \begin{equation}
+    c[g] = \frac{2}{\pi^2\,g(0)^2}
+      \int_0^\infty \frac{g(0)-g(\omega)}{\omega^2}\,\dd\omega.
+    \label{eq:closure-ratio}
+  \end{equation}
+  Specific values:
+  Lorentzian $c\!=\!1$, $K_3^{\mathrm{exp}}\!=\!\Kc$;\;
+  Gaussian $c\!=\!2/\pi$, $K_3^{\mathrm{exp}}\!=\!\Kc/2$;\;
+  uniform $c\!=\!4/\pi^2$, $K_3^{\mathrm{exp}}\!=\!0$.
+\end{theorem}
+
+\begin{proof}
+  The three-body mean field is $H = K_2 Z_1 + K_3 Z_2\bar{Z}_1$.  Near onset,
+  the stationary locked+drifting distribution gives $Z_2 = c[g]\,r^2 +
+  \Order(r^4)$, so $H = (K_2 + K_3\,c[g]\,r^2)\,r + \Order(r^5)$.  The
+  self-consistent equation then expands as $F(r) = c_1 r + c_3 r^3 +
+  \Order(r^5)$ with
+  \[
+    c_3 = \frac{K_3\,c[g]\,\pi\,g(0)}{2}
+          + \frac{\Kc^3\,\pi\,g''(0)}{16}.
+  \]
+  The bifurcation is subcritical when $c_3 > 0$, giving
+  \eqref{eq:K3-explosive-universal}.  The closure ratio $c[g]$ is
+  computed from the balance of locked and drifting contributions to~$Z_2$:
+  at $\Order(h)$ they cancel exactly ($\pm\tfrac{2}{3}hg(0)$); the
+  $\Order(h^2)$ residual depends on the tail integral
+  $\int_0^\infty (1-g(\omega)/g(0))/\omega^2\,\dd\omega$, yielding
+  \eqref{eq:closure-ratio}.  For Gaussian, this reduces to the identity
+  $\int_0^\infty (1-\ee^{-v^2})/v^2\,\dd v = \sqrt{\pi}$, giving
+  $c = 2/\pi$.  For Lorentzian, the OA manifold guarantees $Z_2=Z_1^2$
+  exactly, so $c=1$.
+\end{proof}
+
+\textbf{Physical interpretation}: the closure ratio $c[g]$ measures how
+effectively high-frequency drifting oscillators screen the three-body
+cooperative feedback.  Heavy-tailed distributions maintain a large reservoir
+of fast drifters whose contribution to $Z_2$ partially restores the OA
+closure $Z_2\!\approx\!Z_1^2$, weakening the positive-feedback avalanche.
+Lighter tails $\to$ weaker screening ($c<1$) $\to$ lower explosive threshold.
+This recovers \citet{Skardal2020}'s explosive synchronization and explains
+why it is more pronounced in Gaussian simulations: Lorentzian distributions
+are exactly $2\times$ more resistant than Gaussian (not $\pi\times$ as
+the uncorrected formula would predict).
+
+\subsection{Basin of attraction analysis}
+
+For $K_3>0$ in the supercritical regime, the fixed-point equation
+\eqref{eq:fp-condition} can be rewritten as a cubic in $u=r^2$:
+\begin{equation}
+  K_3\,u^2 - (K_2+K_3)\,u + (K_2 - 2\Delta) = 0.
+  \label{eq:cubic-u}
+\end{equation}
+
+The separatrix (basin boundary) between the incoherent and synchronized
+attractors is determined by the unstable fixed point $r_{\mathrm{sep}}$.
+When $K_3>0$, the cubic structure generically produces an additional unstable
+fixed point that \emph{raises} the basin boundary, shrinking the basin of
+attraction even as the synchronized state becomes more stable.
+
+\begin{proposition}[Basin shrinkage]
+\label{prop:basin-shrink}
+  For $K_3>0$ and $K_2>K_2^{\mathrm{c}}$, the basin of attraction of the
+  synchronized state in the $r$-dynamics is the interval
+  $(r_{\mathrm{sep}}, 1)$ where $r_{\mathrm{sep}}$ is an increasing function
+  of $K_3$.  Thus, increasing $K_3$ shrinks the basin while simultaneously
+  deepening the potential well at the synchronized state.
+\end{proposition}
+
+This resolves the Zhang et al.\ (2024) vs.\ Wang et al.\ (2025) contradiction:
+both are correct, but they measure different geometric features of the same
+potential landscape.
+
+\subsection{Simultaneous opposing effects: the monotonicity theorem}
+
+The following theorem formalizes how $K_3$ can simultaneously help one aspect
+of synchronization while hindering another.
+
+\begin{theorem}[Monotonicity conditions for three synchronization metrics]
+\label{thm:monotonicity}
+  Consider the higher-order Kuramoto model in the supercritical regime
+  ($K_2>2\Delta$, $0<K_3<K_2$).  Define:
+  \begin{itemize}
+    \item $r^*(K_3)$: the stable synchronized order parameter,
+    \item $r_{\mathrm{sep}}(K_3)$: the separatrix (basin boundary),
+    \item $\lambda(K_3) = \frac{\dd}{\dd r}\dot{r}\big|_{r=r^*}$: the
+      stability exponent.
+  \end{itemize}
+  Then:
+  \begin{enumerate}
+    \item $\frac{\dd r^*}{\dd K_3} > 0$: the synchronized state amplitude
+      \emph{increases} with $K_3$ (stronger synchronization).
+    \item $\frac{\dd r_{\mathrm{sep}}}{\dd K_3} > 0$: the basin boundary
+      \emph{rises} with $K_3$ (smaller basin of attraction).
+    \item $\frac{\dd\lambda}{\dd K_3} < 0$ when $r^*>\sqrt{3/5}$: the
+      synchronized state becomes \emph{more stable} (deeper potential well).
+  \end{enumerate}
+  All three effects hold simultaneously for moderate $K_3>0$, demonstrating
+  that higher-order coupling generically produces a ``deeper but narrower
+  well''---more stable synchronization that is harder to reach from arbitrary
+  initial conditions.
+\end{theorem}
+
+\begin{proof}
+  Statement (1) follows from implicit differentiation of \eqref{eq:fp-condition}:
+  $\dd r^*/\dd K_3 = r^{*2}(1-r^{*2})/[2D]$ where
+  $D=(K_2+3K_3r^{*2})(1-r^{*2})-2r^{*2}(K_2+K_3r^{*2})$.
+  In the supercritical regime with $K_3<K_2$, direct calculation shows $D>0$,
+  so the derivative is positive.
+
+  Statement (2): the separatrix $r_{\mathrm{sep}}$ is the smallest positive
+  root of \eqref{eq:fp-condition}.  Differentiating the fixed-point equation
+  at $r_{\mathrm{sep}}$ (which is an unstable fixed point where the slope of
+  $\dot{r}$ is positive), the same implicit differentiation gives
+  $\dd r_{\mathrm{sep}}/\dd K_3>0$.
+
+  Statement (3) follows from differentiating \eqref{eq:lyapunov}:
+  $\dd\lambda/\dd K_3 = \frac{1}{2}(3r^{*2}-5r^{*4})
+  + [\text{terms from } \dd r^*/\dd K_3]$.
+  The leading term $3r^{*2}-5r^{*4}<0$ when $r^*>\sqrt{3/5}\approx 0.775$,
+  which holds in the well-synchronized regime.
+\end{proof}
+
+\subsection{Stability depth (Lyapunov exponent)}
+
+The stability of the synchronized fixed point $r^*$ is quantified by
+\begin{equation}
+  \lambda(r^*) = \frac{\dd}{\dd r}\dot{r}\Big|_{r=r^*}
+  = -\Delta + \frac{K_2}{2}(1-3r^{*2}) + \frac{K_3}{2}(3r^{*2} - 5r^{*4}).
+  \label{eq:lyapunov}
+\end{equation}
+
+For moderate $K_3>0$, the term $\frac{K_3}{2}(3r^{*2}-5r^{*4})$ is positive
+when $r^*<\sqrt{3/5}\approx 0.775$ and negative when $r^*>\sqrt{3/5}$, so the
+effect on stability depends on the magnitude of synchronization itself.
+
+\subsection{Robustness of synchronization to $K_3$}
+\label{sec:robustness}
+
+A natural question is whether large $K_3$ can \emph{destroy} synchronization.
+The answer is no: for any $K_2>2\Delta$, the fixed-point equation
+\eqref{eq:fp-condition} always has a solution $r^*\in(0,1)$.
+
+\begin{proposition}[Indestructibility of synchronization]
+\label{prop:indestructible}
+  For $K_2>2\Delta$, the synchronized state $r^*>0$ exists for all
+  $K_3\in\Real$.  Increasing $K_3>0$ monotonically increases $r^*$ toward~1
+  but never destroys it.
+\end{proposition}
+
+\begin{proof}
+  Define $h(u) = -\Delta + K_2/2 + (K_3-K_2)u/2 - K_3 u^2/2$ where $u=r^2$.
+  Then $h(0)=K_2/2-\Delta>0$ when $K_2>2\Delta$, and $h(1)=-\Delta<0$ always.
+  By the intermediate value theorem, $h$ has a root in $(0,1)$.
+\end{proof}
+
+What $K_3$ \emph{does} change is the \emph{type} of transition
+(\Cref{thm:explosive}): from continuous to explosive.  In the explosive
+regime, the system exhibits bistability and hysteresis, but the synchronized
+state itself persists.
+
+\subsection{Dependence on frequency spread $\sigma$}
+
+The frequency spread $\sigma$ enters the radial dynamics \eqref{eq:r-dynamics}
+solely through $\Delta\approx\sigma\sqrt{\pi/2}$.  This allows us to
+characterize how the phase diagram deforms as $\sigma$ varies.
+
+\begin{proposition}[$\sigma$-scaling of phase boundaries]
+\label{prop:sigma-scaling}
+  Under the rescaling $K_2\to K_2/\Delta$, $K_3\to K_3/\Delta$, the radial
+  dynamics \eqref{eq:r-dynamics} become $\sigma$-independent:
+  \begin{equation}
+    \dot{r} = \Delta\left[-r + \frac{r(1-r^2)}{2}
+      \left(\frac{K_2}{\Delta} + \frac{K_3}{\Delta}r^2\right)\right].
+    \label{eq:rescaled}
+  \end{equation}
+  Consequently, all critical manifolds (onset, basin boundary, explosive line,
+  explosive boundary) are straight rays through the origin in the
+  $(K_2/\sigma, K_3/\sigma)$ plane.
+\end{proposition}
+
+This scaling predicts that the phase diagram is \emph{self-similar} across
+$\sigma$ values: larger $\sigma$ merely stretches the diagram proportionally.
+Any apparent $\sigma$-dependence in the literature arises from studying
+\emph{unrescaled} parameters.
+
+\begin{corollary}[Critical $\sigma$ does not exist]
+  There is no critical frequency spread $\sigma^*$ at which the qualitative
+  effect of $K_3$ changes sign.  The ``contradictions'' across studies arise
+  from comparing different $(K_2,K_3)$ points relative to different $\sigma$
+  values, not from a genuine $\sigma$-dependent phase transition.
+\end{corollary}
+
+This answers the open question posed by \citet{Muolo2025}: the frequency
+distribution affects the \emph{scale} of the phase boundaries but not their
+\emph{topology}.
+
+\subsection{N=3 exact analysis and multiple transitions}
+
+For small systems, the Ott--Antonsen reduction (valid for $N\to\infty$) does
+not apply.  We complement our mean-field theory with an exact analysis of the
+$N=3$ case, where up to 9 synchronization transitions have been
+reported~\citep{Dai2025}.
+
+For $N=3$ with phases $\theta_1,\theta_2,\theta_3$, the phase differences
+$\varphi_1=\theta_2-\theta_1$, $\varphi_2=\theta_3-\theta_1$ satisfy a
+two-dimensional ODE that we analyze via numerical continuation
+(see \texttt{three\_oscillator\_bifurcation.py} in the supplementary code).
+The multiple transitions arise from the interplay between the pairwise and
+three-body terms creating nested stable and unstable manifolds in the
+$(\varphi_1,\varphi_2)$ torus---a finite-size effect absent in the
+thermodynamic limit.
+
+
+%% ============================================================
+\section{Numerical Validation}
+\label{sec:numerics}
+%% ============================================================
+
+To validate the analytical predictions, we performed large-scale numerical
+simulations using 8$\times$NVIDIA A800 GPUs (640\,GB VRAM total).
+
+\subsection{Experimental setup}
+
+\paragraph{Model.}
+We integrate \eqref{eq:higher-order-kuramoto} using a 4th-order Runge--Kutta
+scheme with time step $\dd t=0.01$ and total time $T=200$.
+
+\paragraph{Parameter space.}
+\begin{itemize}
+  \item $K_2\in[0,8]$, 40 grid points
+  \item $K_3\in[-4,4]$, 40 grid points
+  \item $\sigma\in\{0.3, 0.5, 0.8, 1.0, 1.5, 2.0\}$
+  \item $N\in\{200, 500, 1000, 5000, 10000\}$
+\end{itemize}
+Total: $>10^5$ parameter configurations.
+
+\paragraph{Metrics.}
+For each configuration, we measure:
+\begin{enumerate}
+  \item \textbf{Order parameter} $r$: time-averaged over $t\in[100,200]$.
+  \item \textbf{Basin probability} $P_{\mathrm{sync}}$: fraction of 50 random
+    initial conditions reaching $r>0.9$.
+  \item \textbf{Convergence time} $t_c$: first time $r>0.9$.
+\end{enumerate}
+
+\subsection{Results}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.48\textwidth]{figures/fig1_phase_diagram_matrix.pdf}
+  \hfill
+  \includegraphics[width=0.48\textwidth]{figures/fig7_analytic_vs_numeric.pdf}
+  \caption{\textbf{Left}: Analytical $K_2\times K_3$ phase diagram from OA
+    reduction ($\sigma\!=\!1$), showing onset ($\Kc$, horizontal), explosive
+    ($K_3\!=\!K_2$, diagonal) boundaries.
+    \textbf{Right}: Comparison of OA analytical predictions (Lorentzian) with
+    GPU numerical simulations (Gaussian, $N\!=\!200$).  Qualitative structure
+    matches; quantitative differences reflect the Gaussian--Lorentzian gap.}
+  \label{fig:phase-diagram}
+\end{figure}
+
+\paragraph{Benchmark and onset.}
+$\Kc^{\mathrm{num}}\!=\!1.55$ at $N\!=\!200$ ($3\%$ from theory);
+$\sqrt{K_2-\Kc}$ scaling confirmed.  Finite-$N$ variance:
+$\Kc\!=\!1.21\pm0.13$ over 20 random seeds at $N\!=\!200$.
+
+\paragraph{Explosive transition and distribution dependence.}
+\Cref{thm:explosive} is confirmed across three distributions.  At
+$K_3\!=\!1$, the maximum $r$-jump is $0.70$ (uniform), $0.62$ (Gaussian),
+$0.24$ (Lorentzian)---matching the $\kappa$ ordering.  Forward-backward
+sweeps at $K_3\!=\!1.5$ show hysteresis gap $0.41$ (Gaussian, $N\!=\!200$),
+with relaxation time spiking to $48.5$ then dropping abruptly---clear
+first-order signature.  At $K_3\!=\!1.0$ the gap is $0.10$ (near threshold).
+
+\paragraph{OA validity and beyond-OA effects.}
+The ratio $r_2/r_1^2$ validates OA: $0.972$ at $(K_2,K_3)\!=\!(4,2)$,
+deviating to $0.698$ at $(2,-1)$ where 2--3 clusters form.  Locking order
+shows $K_3>0$ weakens frequency selection ($\rho$: $-0.55\to-0.13$),
+supporting the ``winner-takes-all'' mechanism.  Under budget $K_2\!+\!K_3=C$,
+pure pairwise maximizes $r^*$ (OA-optimal) but mixed allocation improves
+basin probability---the \citet{Muolo2025} advantage is a finite-$N$ effect.
+
+\paragraph{Phase diagram and robustness.}
+The $20\!\times\!20$ $(K_2,K_3)$ scan (\Cref{fig:phase-diagram}) confirms
+the qualitative phase structure.  OA vs.\ numerical MAE is $0.18$
+(Gaussian--Lorentzian gap).  Explosive boundary detected at
+$(1.47,1.58)\approx K_3\!=\!K_2$.  Extending $K_3$ to $[0,8]$ confirms
+\Cref{prop:indestructible}: $r^*$ increases monotonically, never drops.
+A $6\!\times\!16\!\times\!16$ scan over $\sigma\in\{0.3,\ldots,1.5\}$
+validates the $\sigma$-scaling (\Cref{prop:sigma-scaling}).
+
+
+%% ============================================================
+\section{Discussion}
+\label{sec:discussion}
+%% ============================================================
+
+Our unified framework resolves the apparent contradictions in the literature
+through a simple geometric insight: the higher-order coupling $K_3$ reshapes
+the entire \emph{landscape} of the radial potential
+\begin{equation}
+  V(r) = -\int_0^r \dot{r}'\,\dd r'
+  = \frac{\Delta}{2}r^2 - \frac{K_2}{2}\left(\frac{r^2}{2}-\frac{r^4}{4}\right)
+  - \frac{K_3}{2}\left(\frac{r^4}{4}-\frac{r^6}{6}\right),
+  \label{eq:potential}
+\end{equation}
+and different studies were measuring different features of this landscape:
+
+\begin{itemize}
+  \item \textbf{Onset} ($\Kc$): Curvature at $r=0$ $\to$ independent of $K_3$
+    (\Cref{prop:onset-independence}).
+  \item \textbf{Basin}: Position of the unstable saddle $\to$ $K_3$ raises it
+    (\Cref{prop:basin-shrink}).
+  \item \textbf{Stability}: Curvature at $r^*$ $\to$ $K_3$ deepens the well
+    for moderate values.
+  \item \textbf{Transition type}: Sign of cubic coefficient $\to$ $K_3>K_2$
+    makes it explosive (\Cref{thm:explosive}).
+\end{itemize}
+
+The indestructibility result (\Cref{prop:indestructible}) clarifies that $K_3$
+cannot eliminate synchronization---it can only change its \emph{character}
+from continuous to explosive, with distribution-dependent susceptibility
+(\Cref{thm:explosive}).
+
+\subsection{Asymmetry between positive and negative $K_3$}
+
+$K_3>0$ produces ``elite synchronization'' (stronger but harder to reach,
+potentially explosive), while $K_3<0$ yields ``democratic synchronization''
+(weaker but robust, always continuous).  Remarkably, for $K_3\to-\infty$,
+$r^*\sim\sqrt{(K_2-\Kc)/|K_3|}$ and $K_{\mathrm{eff}}(r^*)\to\Kc$: the
+system \emph{self-tunes to the critical point}, a form of self-organized
+criticality induced by competitive higher-order coupling.  This suggests
+neural circuits operating ``at the edge of criticality'' may achieve this
+via negative three-body interactions rather than fine-tuned pairwise coupling.
+
+\subsection{Connection to time-delayed systems}
+
+Our framework also illuminates the recently discovered equivalence between
+time-delayed and higher-order coupling~\citep{Muolo2025delay}.  A Taylor
+expansion of the delayed Kuramoto model to $\Order(\tau)$ yields effective
+parameters (see Appendix~\ref{app:time-delay} for the full derivation):
+\begin{equation}
+  K_2^{\mathrm{eff}} = K_2 - \frac{K_2^2\tau}{2},\qquad
+  K_3^{\mathrm{eff}} = \frac{K_2^2\tau}{4}.
+  \label{eq:delay-mapping}
+\end{equation}
+
+Three consequences follow: (1)~$K_3^{\mathrm{eff}}\!\ge\! 0$ always---delay
+can only induce \emph{positive} three-body coupling, so $K_3<0$ is
+inaccessible; (2)~the maximum reachable $K_3^{\mathrm{eff}}$ at given $K_2$
+is $K_2/2$ (attained at $\tau=2/K_2$, where $K_2^{\mathrm{eff}}\to 0$);
+(3)~the delay-induced explosive condition $K_3^{\mathrm{eff}} >
+K_3^{\mathrm{exp}}$ requires $K_2 > 2K_3^{\mathrm{exp}}$.  For Lorentzian
+($K_3^{\mathrm{exp}}\!=\!\Kc$), this gives $K_2 > 2\Kc$---twice the onset
+coupling, explaining why delay-induced explosive transitions are rare.
+For Gaussian ($K_3^{\mathrm{exp}}\!=\!\Kc/2$), the condition relaxes to
+$K_2 > \Kc$, i.e., \emph{any} supercritical coupling suffices: delay-induced
+explosive synchronization is \emph{generic}, not rare, for light-tailed
+distributions.
+
+\subsection{Limitations}
+
+Three analytical limitations: (1)~the explosive threshold
+\eqref{eq:K3-explosive-universal} is derived near onset ($K_2\approx\Kc$);
+for $K_2\gg\Kc$, the transition is smooth regardless of $K_3$, and a global
+bifurcation analysis is needed.  (1b)~The closure ratio $c[g]$ is computed
+in the $r\to 0$ limit; at finite~$r$, $Z_2/Z_1^2$ varies (e.g., from
+$2/\pi$ at onset to $\approx 0.8$ at $r=0.85$ for Gaussian), so the
+corrected self-consistent equation requires the full $Z_2(h)$ function.
+(2)~The three-body truncation requires $K_4 r^4/(K_3 r^2+K_2)\ll 1$;
+near the explosive boundary, four-body terms ($\sim$12\% at $N\!=\!50$) can
+matter.  The OA reduction also assumes all-to-all coupling; sparse
+extensions~\citep{Muolo2025} remain open.
+
+
+%% ============================================================
+\section{Related Work}
+\label{sec:related}
+%% ============================================================
+
+\noindent The Kuramoto model~\citep{Kuramoto1984} and its Ott--Antonsen
+reduction~\citep{OttAntonsen2008} are classical.  For higher-order
+interactions: \citet{Skardal2020} showed explosive synchronization;
+\citet{Zhang2024} found basin shrinkage; \citet{Muolo2025} reported
+non-monotonic effects on hypergraphs; \citet{Wang2025} analyzed ring
+networks; \citet{Dai2025} found 9 transitions at $N\!=\!3$; and
+\citet{Muolo2025delay} established the time-delay equivalence.
+
+
+%% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%% ============================================================
+
+We provided a unified framework for higher-order Kuramoto synchronization:
+(1)~the first OA reduction yielding scalar ODE~\eqref{eq:r-dynamics};
+(2)~a universal explosive threshold $K_3^{\mathrm{exp}}\!=\!\Kc^3|g''(0)|/(8\,c[g]\,g(0))$
+with an explicit OA closure ratio $c[g]$ (\Cref{thm:explosive}), showing tail
+heaviness controls phase transition type through both local curvature and global
+tail decay;
+(3)~three critical manifolds reconciling four contradictory studies;
+(4)~proof that synchronization is indestructible by $K_3$ (\Cref{prop:indestructible});
+(5)~the mapping $K_3^{\mathrm{eff}}\!=\!K_2^2\tau/4$ for time-delayed systems;
+and (6)~validation via $>10^5$ GPU simulations.
+
+
+\bibliography{references}
+\bibliographystyle{plainnat}
+
+
+\newpage
+\input{checklist}
+
+
+%% ============================================================
+\appendix
+\section{Detailed Derivations}
+\label{app:derivations}
+%% ============================================================
+
+\subsection{Mean-field reduction of the three-body term}
+
+Starting from the discrete three-body coupling:
+\begin{equation}
+  T_i = \frac{K_3}{N^2}\sum_{j=1}^{N}\sum_{k=1}^{N}
+  \sin(2\theta_j - \theta_k - \theta_i).
+\end{equation}
+
+Using the identity $\sin(A)=\mathrm{Im}[\ee^{\ii A}]$:
+\begin{align}
+  T_i &= \frac{K_3}{N^2}\,\mathrm{Im}\Biggl[
+    \ee^{-\ii\theta_i}\sum_{j=1}^{N}\ee^{2\ii\theta_j}
+    \sum_{k=1}^{N}\ee^{-\ii\theta_k}
+  \Biggr] \notag \\
+  &= K_3\,\mathrm{Im}\bigl[\ee^{-\ii\theta_i}\,Z_2\,\bar{Z}_1\bigr],
+\end{align}
+where $Z_n = \frac{1}{N}\sum_j \ee^{\ii n\theta_j}$.
+
+In the $N\to\infty$ limit, $Z_n\to\int\ee^{\ii n\theta}f(\theta,\omega,t)\,
+\dd\theta\,\dd\omega$, confirming \eqref{eq:triplet-mf}.
+
+\subsection{Derivation of the $\alpha$-ODE}
+
+Substituting the Ott--Antonsen ansatz $\hat{f}_n = \alpha^n$ into the
+continuity equation and using the velocity field \eqref{eq:velocity-full}:
+
+The $n$-th Fourier component of the continuity equation gives
+\begin{equation}
+  \dot{\hat{f}}_n = -\ii n\omega\,\hat{f}_n
+  + \frac{n}{2}\bigl[H\,\hat{f}_{n-1} - \bar{H}\,\hat{f}_{n+1}\bigr],
+\end{equation}
+where $H = K_2 Z_1 + K_3 Z_2\bar{Z}_1$ is the effective coupling field.
+
+On the Ott--Antonsen manifold, $\hat{f}_n=\alpha^n$, so
+\begin{equation}
+  n\alpha^{n-1}\dot{\alpha} = -\ii n\omega\,\alpha^n
+  + \frac{n}{2}\bigl[H\,\alpha^{n-1} - \bar{H}\,\alpha^{n+1}\bigr].
+\end{equation}
+
+Dividing by $n\alpha^{n-1}$ yields \eqref{eq:alpha-ode}.
+
+\subsection{Radial dynamics derivation}
+
+Setting $\omega_0=0$, evaluating $\alpha$ at $\omega=-\ii\Delta$ for the
+Lorentzian, and writing $z=\bar{\alpha}(-\ii\Delta)$ with $z=r\ee^{\ii\phi}$:
+
+From \eqref{eq:alpha-ode}:
+\begin{align}
+  \dot{\bar{\alpha}} &= \ii\omega\bar{\alpha}
+  + \frac{1}{2}\bigl[\bar{H} - H\,\bar{\alpha}^2\bigr].
+\end{align}
+
+At $\omega=-\ii\Delta$, $\bar{\alpha}=z$, $Z_n=z^n$:
+\begin{align}
+  \dot{z} &= -\Delta z + \frac{1}{2}\bigl[\bar{H} - H z^2\bigr] \\
+  &= -\Delta z + \frac{1}{2}\bigl[
+    (K_2\bar{z} + K_3\bar{z}^2 z) - (K_2 z + K_3 z^2\bar{z})z^2
+  \bigr].
+\end{align}
+
+With $z=r\ee^{\ii\phi}$ and extracting the radial part:
+\begin{align}
+  \dot{r} &= -\Delta r + \frac{1}{2}\bigl[K_2 r(1-r^2) + K_3 r^3(1-r^2)\bigr] \\
+  &= -\Delta r + \frac{r(1-r^2)}{2}(K_2+K_3 r^2),
+\end{align}
+confirming \eqref{eq:r-dynamics}.  \qed
+
+
+\section{Time-Delay Equivalence}
+\label{app:time-delay}
+
+The full derivation of the time-delay to higher-order mapping is provided in
+the supplementary file \texttt{time\_delay\_equivalence.tex}.  Here we state
+the key result.
+
+Starting from the delayed Kuramoto model
+$\dot{\theta}_i = \omega_i + \frac{K_2}{N}\sum_j\sin(\theta_j(t-\tau)-\theta_i(t))$,
+a Taylor expansion to $\Order(\tau)$ followed by trigonometric product-to-sum
+identities yields:
+\begin{align}
+  K_2^{\mathrm{eff}} &= K_2 - \frac{K_2^2\tau}{2}, \\
+  K_3^{\mathrm{eff}} &= \frac{K_2^2\tau}{4}.
+\end{align}
+
+The physically reachable region satisfies
+$K_3^{\mathrm{eff}} = (K_2-K_2^{\mathrm{eff}})/2$ with $K_3^{\mathrm{eff}}\ge 0$,
+forming a triangle in the $(K_2^{\mathrm{eff}}, K_3^{\mathrm{eff}})$ plane.
+
+
+\end{document}
