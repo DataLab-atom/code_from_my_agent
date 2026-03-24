@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[utf8]{inputenc}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Order}{\mathcal{O}}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+
+\title{Asymmetry Between Positive and Negative $K_3$}
+\author{HaibiMathAgent}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\section{Physical Motivation}
+
+Positive $K_3$ represents \emph{cooperative} three-body interaction: groups of
+three oscillators with similar phases reinforce each other.  Negative $K_3$
+represents \emph{competitive/frustrated} three-body interaction: aligned groups
+are penalized.
+
+\section{OA Analysis of the Asymmetry}
+
+From $\dot{r} = -\Delta r + \frac{r(1-r^2)}{2}(K_2 + K_3 r^2)$:
+
+\subsection{$K_3 > 0$ regime}
+The effective coupling $K_2 + K_3 r^2$ \emph{increases} with $r$.
+This creates a positive feedback loop: more synchronization $\to$ stronger
+effective coupling $\to$ even more synchronization.  This is the mechanism
+behind explosive synchronization (\Cref{sec:explosive} in main paper).
+
+\paragraph{Fixed point structure:}
+\begin{itemize}
+  \item For $K_3 < K_2$: single stable FP above threshold (supercritical).
+  \item For $K_3 > K_2$: bistability possible (subcritical).
+  \item Always: $r^*$ increases with $K_3$ (deeper well).
+  \item Always: basin boundary rises with $K_3$ (narrower basin).
+\end{itemize}
+
+\subsection{$K_3 < 0$ regime}
+The effective coupling $K_2 + K_3 r^2$ \emph{decreases} with $r$.
+This creates a \emph{self-limiting} feedback: synchronization weakens
+its own coupling, leading to bounded synchronization.
+
+\paragraph{Fixed point structure:}
+The fixed-point equation $\Delta = \frac{(1-r^2)}{2}(K_2 + K_3 r^2)$
+has qualitatively different solutions:
+
+\begin{proposition}[Self-limiting synchronization for $K_3<0$]
+  For $K_3 < 0$:
+  \begin{enumerate}
+    \item The synchronized fixed point $r^*$ \emph{decreases} with $|K_3|$
+      (weaker synchronization).
+    \item The basin of attraction of the synchronized state \emph{expands}
+      with $|K_3|$ (easier to reach).
+    \item The bifurcation is always supercritical (never explosive).
+    \item There exists a critical $K_3^{\min} = -K_2/(r^{*2})$ below which
+      the effective coupling becomes repulsive at $r^*$, and the synchronized
+      state is destroyed.
+  \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+  (1) From $\frac{\dd r^*}{\dd K_3} = \frac{r^{*2}(1-r^{*2})}{2D}$ with
+  $D>0$ in the supercritical regime, and noting $r^{*2}>0$, $1-r^{*2}>0$:
+  $\dd r^*/\dd K_3 > 0$, so $r^*$ decreases as $K_3$ becomes more negative.
+
+  (2) The basin boundary $r_{\mathrm{sep}}$ satisfies the same equation
+  but at an unstable FP.  For $K_3<0$, the cubic structure
+  $K_3 u^2 - (K_2+K_3)u + (K_2-2\Delta)=0$ with $K_3<0$ has the
+  leading coefficient negative, pushing $r_{\mathrm{sep}}$ toward 0
+  (wider basin).
+
+  (3) The cubic coefficient in the normal form is $-(K_2-K_3)/2$.
+  For $K_3<0$: $K_2-K_3 = K_2+|K_3| > 0$ always, so the bifurcation
+  is supercritical.
+
+  (4) At $K_2 + K_3 r^{*2} = 0$, i.e., $K_3 = -K_2/r^{*2}$, the
+  effective coupling vanishes. Below this, the synchronized state
+  cannot be sustained.
+\end{proof}
+
+\section{Physical Interpretation: ``Deeper Narrower'' vs ``Shallower Wider''}
+
+The two regimes represent fundamentally different synchronization strategies:
+
+\begin{center}
+\begin{tabular}{lll}
+  & $K_3 > 0$ & $K_3 < 0$ \\
+\hline
+  $r^*$ & Higher (stronger sync) & Lower (weaker sync) \\
+  Basin & Narrower (harder to reach) & Wider (easier to reach) \\
+  Stability & Deeper well & Shallower well \\
+  Transition & Can be explosive & Always continuous \\
+  Strategy & ``Elite synchronization'' & ``Democratic synchronization'' \\
+\end{tabular}
+\end{center}
+
+\paragraph{Implications for neural systems:}
+Negative $K_3$ (competitive higher-order) may be preferred in biological
+systems that need \emph{robust} synchronization (wide basin, easy to enter)
+over \emph{strong} synchronization (high $r^*$).  This could explain why
+neural circuits exhibit moderate, fluctuating synchrony rather than full
+phase locking.
+
+\section{Cluster States for $K_3 < 0$}
+
+GPU-Claude-Opus (Task M.1) found multi-cluster states (2--3 clusters) only
+at moderate $K_2$ + negative $K_3$.  On the OA manifold, cluster states are
+not captured (OA assumes identical oscillator populations).  The emergence
+of clusters for $K_3<0$ signals departure from the OA manifold, consistent
+with the $r_2/r_1^2 > 1$ diagnostic.
+
+A full cluster theory requires extending the OA framework to multiple
+populations, which is beyond the scope of this paper but represents an
+important future direction.
+
+\end{document}
