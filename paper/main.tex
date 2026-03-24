@@ -625,29 +625,110 @@ $\sqrt{K_2-\Kc}$ scaling confirmed.  Finite-$N$ variance:
 $\Kc\!=\!1.21\pm0.13$ over 20 random seeds at $N\!=\!200$.
 
 \paragraph{Explosive transition and distribution dependence.}
-\Cref{thm:explosive} is confirmed across three distributions.  At
-$K_3\!=\!1$, the maximum $r$-jump is $0.70$ (uniform), $0.62$ (Gaussian),
-$0.24$ (Lorentzian)---matching the $\kappa$ ordering.  Forward-backward
-sweeps at $K_3\!=\!1.5$ show hysteresis gap $0.41$ (Gaussian, $N\!=\!200$),
-with relaxation time spiking to $48.5$ then dropping abruptly---clear
-first-order signature.  At $K_3\!=\!1.0$ the gap is $0.10$ (near threshold).
+\Cref{thm:explosive} is confirmed across three distributions
+(\Cref{fig:hysteresis}).  At $K_3\!=\!1$, the maximum $r$-jump is $0.70$
+(uniform), $0.62$ (Gaussian), $0.24$ (Lorentzian)---matching the $\kappa$
+ordering.  Forward-backward sweeps at $K_3\!=\!1.5$ show hysteresis gap
+$0.41$ (Gaussian, $N\!=\!200$), with relaxation time spiking to $48.5$
+then dropping abruptly---clear first-order signature
+(\Cref{fig:critical-slowing}).  At $K_3\!=\!1.0$ the gap is $0.10$
+(near threshold).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{paper/figures/fig2.pdf}
+  \caption{Hysteresis loops for seven $K_3$ values.  Forward (red) and
+    backward (blue) adiabatic sweeps of $K_2$.  Shaded area quantifies
+    the first-order character.  Hysteresis area is non-monotonic in $K_3$
+    with a minimum near $K_3\!\approx\!1.0$.}
+  \label{fig:hysteresis}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{paper/figures/fig4.pdf}
+  \caption{Critical slowing down.  Relaxation time $\tau$ near onset for
+    four $K_3$ values.  $K_3>0$ \emph{enhances} critical slowing
+    ($\tau_{\max}$: $12\to48.5$\,s), contrary to the na\"ive expectation
+    that explosive transitions suppress precursor signals.}
+  \label{fig:critical-slowing}
+\end{figure}
+
+\paragraph{$K_3$ asymmetry and locking mechanism.}
+A 60-point scan over $K_3\!\in\![-3,3]$ reveals strong positive--negative
+asymmetry (\Cref{fig:asymmetry}).  The locking threshold
+$\omega_c\!=\!r_1(K_2\!+\!K_3 r_2)$ widens from $1.09$ ($K_3\!=\!-1$) to
+$2.40$ ($K_3\!=\!+1$), explaining the ``winner-takes-all'' effect
+(\Cref{fig:locking}).  Of 672 tested $(K_2,K_3,\sigma)$ points, 20 (3\%)
+show $K_3>0$ reducing $r$---all in the near-critical region $K_2\!\approx\!\Kc$.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\textwidth]{paper/figures/fig3.pdf}
+  \caption{$K_3$ asymmetry.  (a)~$r_1$, $r_2$ vs $K_3$.
+    (b)~Basin probability.  (c)~$r_2/r_1^2$ ratio as OA validity
+    diagnostic.  (d)~Representative $r_1(t)$ time series.}
+  \label{fig:asymmetry}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{paper/figures/fig6.pdf}
+  \caption{Locking threshold.  Probability of locking $P(\text{locked}|\omega)$
+    vs.\ natural frequency for three $K_3$ values.  $K_3>0$ widens the
+    locking range; $K_3<0$ induces non-classical unlocking of
+    low-frequency oscillators.}
+  \label{fig:locking}
+\end{figure}
 
 \paragraph{OA validity and beyond-OA effects.}
 The ratio $r_2/r_1^2$ validates OA: $0.972$ at $(K_2,K_3)\!=\!(4,2)$,
-deviating to $0.698$ at $(2,-1)$ where 2--3 clusters form.  Locking order
-shows $K_3>0$ weakens frequency selection ($\rho$: $-0.55\to-0.13$),
-supporting the ``winner-takes-all'' mechanism.  Under budget $K_2\!+\!K_3=C$,
+deviating to $0.698$ at $(2,-1)$ where 2--3 clusters form.
+Under budget $K_2\!+\!K_3=C$,
 pure pairwise maximizes $r^*$ (OA-optimal) but mixed allocation improves
 basin probability---the \citet{Muolo2025} advantage is a finite-$N$ effect.
 
-\paragraph{Phase diagram and robustness.}
-The $20\!\times\!20$ $(K_2,K_3)$ scan (\Cref{fig:phase-diagram}) confirms
-the qualitative phase structure.  OA vs.\ numerical MAE is $0.18$
-(Gaussian--Lorentzian gap).  Explosive boundary detected at
-$(1.47,1.58)\approx K_3\!=\!K_2$.  Extending $K_3$ to $[0,8]$ confirms
-\Cref{prop:indestructible}: $r^*$ increases monotonically, never drops.
-A $6\!\times\!16\!\times\!16$ scan over $\sigma\in\{0.3,\ldots,1.5\}$
-validates the $\sigma$-scaling (\Cref{prop:sigma-scaling}).
+\paragraph{Sparse networks and topology dependence.}
+On sparse Erd\H{o}s--R\'enyi networks ($p\!=\!0.1$), $K_3$ has
+\emph{zero} measurable effect (\Cref{fig:sparse}).  Triangle density
+$\sim\!p^3\!=\!10^{-3}$ provides no structural substrate for three-body
+coupling.  Only at $p\!=\!1$ (all-to-all) does $K_3$ produce large effects.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{paper/figures/fig5.pdf}
+  \caption{Network topology gates $K_3$ efficacy.  At $p\!=\!0.1$ (sparse),
+    $K_3$ has zero effect on $r$.  At $p\!=\!1.0$ (all-to-all), $K_3$
+    produces the large effects analyzed throughout this paper.  Triangle
+    density $\sim\!p^3$ is the key structural prerequisite.}
+  \label{fig:sparse}
+\end{figure}
+
+\paragraph{Theory--numerical validation.}
+The corrected self-consistent equation (using exact $c[g]$) achieves
+$<\!3\%$ error for $\sigma\!\le\!1.0$ (\Cref{fig:theory-validation}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{paper/figures/fig7.pdf}
+  \caption{Corrected Gaussian self-consistent equation vs.\ GPU simulations
+    across six $\sigma$ values.  Error $<\!3\%$ for $\sigma\!\le\!1.0$;
+    finite-$N$ effects dominate at $\sigma\!\ge\!1.2$.}
+  \label{fig:theory-validation}
+\end{figure}
+
+\paragraph{Finite-size scaling.}
+$K_3$ enhancement persists and strengthens from $N\!=\!20$ to $N\!=\!20000$
+(\Cref{fig:finite-size}), confirming it is not a finite-size artifact.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.7\textwidth]{paper/figures/fig8.pdf}
+  \caption{Finite-size scaling.  $\Delta r(K_3\!=\!+1)$ increases with $N$,
+    converging to the Gaussian exact prediction.  The $K_3$ enhancement is
+    a thermodynamic-limit property, not a finite-$N$ artifact.}
+  \label{fig:finite-size}
+\end{figure}
 
 
 %% ============================================================
