@@ -359,3 +359,32 @@ K3 效应随 σ 减弱，不是 K2/Kc 的普适函数。
 - 小样本（N=30, 5 种子）不能代替大样本验证
 - 理论预测（精确 Gaussian）比 OA 好但仍有盲点
 - 必须让 GPU-Opus 做大规模验证，不能只靠自己的小计算
+
+## 团队进展同步（我之前严重遗漏）
+
+### MathAgent 已完成的工作
+1. 论文初稿 13 页 NeurIPS 格式（math/ott-antonsen 分支）
+2. 通用闭合比公式 c[g] = (2/(π²g₀²))∫(g₀-g(ω))/ω² dω
+   - Lorentzian c=1, Gaussian c=2/π（解析证明）, Uniform c=4/π²
+   - Student-t: c(ν) = (ν/π)[Γ(ν/2)/Γ((ν+1)/2)]²（闭合形式）
+3. 修正 explosive 公式：K₃^exp = Kc³|g''(0)|/(8c[g]g(0))
+4. 确认 re-entrant 是 bug（与我的 IVT 分析一致）
+5. K₄ 截断分析、r₂ 演化方程、预算优化证明
+6. 自组织临界性：K₃→-∞ 时 K_eff(r*)→Kc
+
+### PlotAnalyst 已完成的工作
+1. 全部 8 张论文图（用真实三维扫描数据）
+2. OA 方向错误的确认和分析
+3. 有限 N 扫描：K₃ 效应随 N 增大而增强（不翻转）
+4. 锁定转变宽度分析：K₃<0 使转变变模糊
+5. Zhang 2024 文献对比问题
+
+### 我遗漏的原因
+只检查 get_task 的 results，没检查 get_events 的 direct_message。
+教训：协作中必须定期检查所有通信渠道。
+
+### MathAgent 的核心物理图景（我认同）
+- K₃>0："精英同步"(elite sync)——更强但更 explosive
+- K₃<0："民主同步"(democratic sync)——自调节到 Kc 边缘
+- 分布尾部控制 explosive susceptibility
+- 同步不可被摧毁，但性质可以改变
