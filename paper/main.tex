@@ -705,10 +705,12 @@ from continuous to explosive, with distribution-dependent susceptibility
 
 $K_3>0$ produces ``elite synchronization'' (stronger but harder to reach,
 potentially explosive), while $K_3<0$ yields ``democratic synchronization''
-(weaker but robust, always continuous).  This suggests cortical oscillations
-may favor competitive ($K_3<0$) coupling for robustness, while cardiac
-pacemakers benefit from cooperative ($K_3>0$) coupling.  The $K_3<0$ regime
-also supports multi-cluster states beyond OA.
+(weaker but robust, always continuous).  Remarkably, for $K_3\to-\infty$,
+$r^*\sim\sqrt{(K_2-\Kc)/|K_3|}$ and $K_{\mathrm{eff}}(r^*)\to\Kc$: the
+system \emph{self-tunes to the critical point}, a form of self-organized
+criticality induced by competitive higher-order coupling.  This suggests
+neural circuits operating ``at the edge of criticality'' may achieve this
+via negative three-body interactions rather than fine-tuned pairwise coupling.
 
 \subsection{Connection to time-delayed systems}
 
@@ -731,11 +733,14 @@ time-delayed systems.
 
 \subsection{Limitations}
 
-Our three-body truncation is justified when $K_4 r^4/(K_3 r^2+K_2)\ll 1$,
-which holds for $K_3<K_2/2$ and $r^*<0.7$ (error $<5\%$); near the
-explosive boundary, four-body terms ($\sim$12\% effect at $N\!=\!50$) should
-be included.  The OA reduction also assumes all-to-all coupling; sparse
-network extensions~\citep{Muolo2025} remain an important direction.
+Two analytical limitations: (1)~the explosive threshold
+\eqref{eq:K3-explosive-universal} is derived near onset ($K_2\approx\Kc$);
+for $K_2\gg\Kc$, the transition is smooth regardless of $K_3$, and a global
+bifurcation analysis is needed.
+(2)~The three-body truncation requires $K_4 r^4/(K_3 r^2+K_2)\ll 1$;
+near the explosive boundary, four-body terms ($\sim$12\% at $N\!=\!50$) can
+matter.  The OA reduction also assumes all-to-all coupling; sparse
+extensions~\citep{Muolo2025} remain open.
 
 
 %% ============================================================
