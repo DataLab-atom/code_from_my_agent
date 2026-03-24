@@ -46,6 +46,43 @@ CMAP_TC = "YlOrRd_r"
 FIG_DIR = "figures"
 
 
+# ─── Ott-Antonsen 解析工具（来自 MathAgent 推导） ───
+def oa_delta_gaussian(sigma):
+    """Gaussian 频率分布的等效半宽 Δ ≈ σ√(π/2)"""
+    return sigma * np.sqrt(np.pi / 2)
+
+
+def oa_Kc_onset(sigma):
+    """同步起始临界值 K₂c = 2Δ (K₃ 无关，leading order)"""
+    return 2.0 * oa_delta_gaussian(sigma)
+
+
+def oa_fixed_point_eq(r2, K2, K3, Delta):
+    """不动点方程残差: Δ - (1-r²)/2*(K₂+K₃r²) = 0"""
+    return Delta - (1.0 - r2) / 2.0 * (K2 + K3 * r2)
+
+
+def oa_phase_boundary(K3_arr, sigma, r_thresh=0.01):
+    """
+    给定 K₃ 数组和 σ，求解析相边界 K₂c(K₃)
+    在 r=r_thresh 处线性化: K₂c ≈ 2Δ - K₃*r_thresh²
+    更精确: 解不动点方程 Δ = (1-r²)/2*(K₂+K₃r²) 在 r→0+ 极限
+    K₂c = 2Δ (与 K₃ 无关 at onset)
+    """
+    Delta = oa_delta_gaussian(sigma)
+    # Leading order: Kc = 2Δ 不依赖 K₃
+    # 但对于有限 r 的等值线，K₃ 会有影响
+    # 对 r=0.5 等值线求解: Δ = (1-r²)/2*(K₂+K₃r²)
+    # => K₂ = 2Δ/(1-r²) - K₃r²
+    r2 = r_thresh ** 2
+    return 2.0 * Delta / (1.0 - r2) - K3_arr * r2
+
+
+def oa_explosive_boundary(K2_arr):
+    """爆炸式同步边界: K₃ = K₂ (超临界→亚临界转变)"""
+    return K2_arr.copy()
+
+
 def load_data(path="scan_sigma_K2_K3.json"):
     """加载扫描数据，兼容 demo 和正式数据"""
     with open(path) as f:
@@ -91,9 +128,6 @@ def fig1_phase_diagram_matrix(d, save=True):
 
     K3g, K2g = np.meshgrid(K3, K2)
 
-    # 理论临界线 Kc(σ)
-    Kc_theory = lambda s: 2.0 * np.sqrt(2 * np.pi) * s
-
     for i, sig in enumerate(sigma):
         # --- r ---
         ax = axes[0, i]
@@ -103,11 +137,24 @@ def fig1_phase_diagram_matrix(d, save=True):
         ax.contour(K3g, K2g, r[i], levels=[0.3, 0.5, 0.7],
                    colors=["0.2"], linewidths=[0.6, 1.0, 0.6],
                    linestyles=["--", "-", "--"])
-        # 理论 Kc 水平线
-        Kc = Kc_theory(sig)
+        # OA 临界线 (r=0.5 等值线)
+        k3_fine = np.linspace(K3.min(), K3.max(), 200)
+        Kc_oa = oa_phase_boundary(k3_fine, sig, r_thresh=0.5)
+        mask_oa = (Kc_oa >= K2.min()) & (Kc_oa <= K2.max())
+        if mask_oa.any():
+            ax.plot(k3_fine[mask_oa], Kc_oa[mask_oa], "w--", lw=1.2, alpha=0.9)
+
+        # 爆炸式边界 K₃ = K₂
+        k2_fine = np.linspace(K2.min(), K2.max(), 100)
+        mask_ex = (k2_fine >= K3.min()) & (k2_fine <= K3.max())
+        if mask_ex.any():
+            ax.plot(k2_fine[mask_ex], k2_fine[mask_ex], "w:", lw=0.8, alpha=0.7)
+
+        # Kc onset 标注
+        Kc = oa_Kc_onset(sig)
         if Kc <= K2.max():
-            ax.axhline(Kc, color="white", ls=":", lw=0.8, alpha=0.8)
-            ax.text(K3[-1] * 0.9, Kc + 0.1, f"Kc={Kc:.1f}",
+            ax.axhline(Kc, color="white", ls=":", lw=0.6, alpha=0.5)
+            ax.text(K3[-1] * 0.85, Kc + 0.1, f"$K_c$={Kc:.1f}",
                     color="white", fontsize=7, ha="right")
         ax.set_title(f"$\\sigma={sig:.1f}$")
         ax.set_xlabel("$K_3$")
@@ -443,7 +490,7 @@ def fig7_analytic_vs_numeric(d, analytic_Kc_func=None, save=True):
     """
     将 Ott-Antonsen 解析临界曲线叠加到数值相图上
     analytic_Kc_func: callable(K3, sigma) -> Kc 解析值
-                      如果 None 则用经典公式 Kc=2√(2π)σ 作为 baseline
+                      如果 None 则用 Ott-Antonsen 推导结果
     """
     _ensure_dir()
     sigma, K2, K3, r = d["sigma"], d["K2"], d["K3"], d["r"]
@@ -462,15 +509,23 @@ def fig7_analytic_vs_numeric(d, analytic_Kc_func=None, save=True):
         ax.contour(K3g, K2g, r[i], levels=[0.5],
                    colors=["white"], linewidths=[1.5], linestyles=["-"])
 
-        # 解析曲线
+        # 解析曲线 (Ott-Antonsen)
         k3_fine = np.linspace(K3.min(), K3.max(), 200)
         if analytic_Kc_func is not None:
             Kc_analytic = [analytic_Kc_func(k, sig) for k in k3_fine]
         else:
-            # baseline: 经典 Kc 不依赖 K₃
-            Kc_analytic = [2.0 * np.sqrt(2 * np.pi) * sig] * len(k3_fine)
+            # Ott-Antonsen: r=0.5 等值线
+            Kc_analytic = oa_phase_boundary(k3_fine, sig, r_thresh=0.5)
 
-        ax.plot(k3_fine, Kc_analytic, "w--", lw=2, label="Ott-Antonsen")
+        ax.plot(k3_fine, Kc_analytic, "w--", lw=2, label="OA (r=0.5)")
+
+        # 爆炸式同步边界 K₃ = K₂
+        k2_fine = np.linspace(K2.min(), K2.max(), 100)
+        k3_explosive = oa_explosive_boundary(k2_fine)
+        mask = (k3_explosive >= K3.min()) & (k3_explosive <= K3.max())
+        if mask.any():
+            ax.plot(k3_explosive[mask], k2_fine[mask], "w:",
+                    lw=1.5, label="Explosive" if i == 0 else None)
         ax.set_xlabel("$K_3$")
         ax.set_title(f"$\\sigma={sig:.1f}$")
         if i == 0:
