@@ -671,7 +671,7 @@ def fig8_reentrant(d, save=True):
 def generate_all(data_path="scan_sigma_K2_K3.json"):
     """一键生成全部论文图"""
     d = load_data(data_path)
-    print(f"Data: σ={len(d['sigma'])}, K₂={len(d['K2'])}, K₃={len(d['K3'])}, N={d['N']}")
+    print(f"Data: sigma={len(d['sigma'])}, K2={len(d['K2'])}, K3={len(d['K3'])}, N={d['N']}")
 
     fig1_phase_diagram_matrix(d)
     fig2_sigma_effect(d)
