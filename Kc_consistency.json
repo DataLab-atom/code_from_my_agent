@@ -1,0 +1,9 @@
+{
+  "Kc_mean": 1.2104864533229773,
+  "Kc_std": 0.13045640407592055,
+  "Kc_min": 0.9895764986309734,
+  "Kc_max": 1.4404394247469927,
+  "n_seeds": 20,
+  "Kc_theory": 1.5957691216057306,
+  "diagnosis": "Kc varies by seed due to finite-N omega realization. Not a bug. Mean over 20 seeds gives reliable estimate."
+}
