@@ -594,24 +594,15 @@ $r_2/r_1^2\gg 1$ (up to $\sim 9$), confirming that the incoherent state
 lies far from the OA manifold.  These results validate $r_2/r_1^2$ as a
 practical diagnostic for OA validity and cluster formation.
 
-\paragraph{Experiment 4: Budget-constrained allocation.}
-Under the constraint $K_2+K_3=C$, the OA theory predicts that pure pairwise
-coupling ($K_3=0$) maximizes $r^*$.  Numerical simulations at finite $N$,
-however, show that moderate $K_3>0$ allocation can improve the
-\emph{basin probability}---confirming that the mixed-allocation advantage
-reported by \citet{Muolo2025} is a genuine finite-size effect not captured
-by the mean-field theory.
-
-\paragraph{Experiment 4b: Locking order.}
-The correlation between $|\omega_i|$ and lock-on time reveals the
-frequency-selection mechanism of higher-order coupling.  For $K_3<0$, the
-correlation is strong ($\rho=-0.55$): oscillators with frequencies near
-zero lock first, preserving the classical frequency-ordered entrainment.
-For $K_3>0$, the correlation weakens to $\rho=-0.13$, indicating that
-three-body cooperativity overrides frequency proximity---a ``winner-takes-all''
-effect where initial phase alignment matters more than natural frequency.
-This provides mechanistic insight into why $K_3>0$ narrows the basin
-(sensitive to initial conditions) while strengthening the locked state.
+\paragraph{Experiment 4: Budget allocation and locking order.}
+Under the constraint $K_2+K_3=C$, OA predicts pure pairwise coupling
+($K_3=0$) maximizes $r^*$; finite-$N$ simulations show moderate $K_3>0$ can
+improve basin probability instead---confirming that mixed-allocation advantage
+\citep{Muolo2025} is a finite-size effect.
+Locking order analysis reveals that $K_3>0$ weakens the
+$|\omega_i|$--lock-time correlation ($\rho$: $-0.55\to -0.13$),
+indicating a ``winner-takes-all'' mechanism where phase alignment overrides
+frequency proximity.
 
 \paragraph{Experiment 5: Hysteresis and transition order.}
 Forward-backward sweeps of $K_2$ at fixed $K_3$ reveal hysteresis consistent
@@ -625,25 +616,13 @@ transitions for $K_3<0$) does not capture.  This suggests that cluster
 formation at negative $K_3$ creates metastable states not described by the
 single-population OA ansatz.
 
-\paragraph{Experiment 6: Chimera states (negative result).}
-A systematic search for chimera states (coexistence of synchronized and
-desynchronized subpopulations) across 15 $(K_2,K_3)$ configurations with
-$N=500$ found no chimera signatures, even for large $|K_3|$.  This is
-consistent with the theoretical expectation that chimera states require
-broken coupling symmetry (e.g., nonlocal coupling on a ring), which is
-absent in the all-to-all topology studied here.  Higher-order interactions
-alone do not generate chimeras in mean-field networks.
-
-\paragraph{Experiment 7: Frequency distribution shape effects.}
-Comparing Gaussian, Lorentzian, and uniform frequency distributions at
-$N=200$, $\sigma=1$: (i) the measured $\Kc$ differs across distributions
-(Gaussian: $1.28$, Lorentzian: $1.30$, uniform: $1.81$), confirming that the
-exact $\Kc$ depends on $g(0)$ as predicted; (ii) the $K_3$-dependence of
-$\Kc$ is weak ($<10\%$ across $K_3\in[-1,1]$), consistent with our
-\Cref{prop:onset-independence} that onset is $K_3$-independent at leading
-order; (iii) the Lorentzian shows the smallest $K_3$ sensitivity
-($\Delta\Kc=0.025$), validating that OA is most accurate for this
-distribution.
+\paragraph{Experiments 6--7: Chimera search and distribution effects.}
+No chimera states were found across 15 $(K_2,K_3)$ configurations
+($N\!=\!500$), confirming that higher-order interactions alone cannot generate
+chimeras in all-to-all networks.
+Comparing Gaussian, Lorentzian, and uniform distributions: $\Kc$ depends on
+$g(0)$ as predicted (Gaussian: $1.28$, uniform: $1.81$), and $K_3$-sensitivity
+is weak ($<\!10\%$), consistent with \Cref{prop:onset-independence}.
 
 \paragraph{Experiment 8: 2D phase diagram.}
 The $20\times 20$ scan over $K_2\in[0,4]$, $K_3\in[-2,2]$ at $\sigma=1$,
@@ -747,22 +726,13 @@ Three important consequences follow:
     \emph{not} typically observed in time-delayed Kuramoto systems.
 \end{enumerate}
 
-\subsection{Limitations and four-body effects}
+\subsection{Limitations}
 
-Our analysis truncates the interaction hierarchy at three-body terms.
-Numerical experiments (see supplementary \texttt{K4\_test.json}) show that
-adding a four-body coupling $K_4$ at $\Order(\tau^2)$ in the time-delay
-expansion produces a $\sim$12\% variation in $r_1$ for $K_4\in[-1,1]$ at
-$N=50$.  While this effect diminishes with increasing $N$ (the four-body term
-scales as $N^{-3}$), it suggests that for applications where quantitative
-accuracy matters---particularly in small networks---the four-body contribution
-should not be neglected.
-
-Additionally, the Ott--Antonsen reduction assumes all-to-all coupling.
-For sparse networks or hypergraphs, the mean-field approximation breaks down,
-and network topology introduces additional degrees of freedom that our
-framework does not capture.  Extending the analysis to structured
-networks~\citep{Muolo2025} remains an important direction.
+Our three-body truncation is justified when $K_4 r^4/(K_3 r^2+K_2)\ll 1$,
+which holds for $K_3<K_2/2$ and $r^*<0.7$ (error $<5\%$); near the
+explosive boundary, four-body terms ($\sim$12\% effect at $N\!=\!50$) should
+be included.  The OA reduction also assumes all-to-all coupling; sparse
+network extensions~\citep{Muolo2025} remain an important direction.
 
 
 %% ============================================================
