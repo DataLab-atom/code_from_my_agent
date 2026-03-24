@@ -90,7 +90,20 @@ Direction correct, magnitude overestimated (~75-84% agreement).
 The formula captures the essential physics: K₃ modifies the effective coupling
 strength that determines which oscillators can frequency-lock.
 
-### 7. Open questions
+### 7. Why OA misses the K₃ effect at onset (pseudopotential analysis)
+
+OA pseudopotential data confirms: curvature at r=0 is INDEPENDENT of K₃.
+This is mathematically inevitable (K₃ term has r² prefactor → vanishes at r=0).
+So OA correctly says "K₃ doesn't affect linear onset."
+
+BUT: the real transition is NONLINEAR. K₃ modifies the potential landscape at
+r>0 (where the barrier/saddle lives). Gaussian exact captures this; Lorentzian
+OA linearizes away the very region where K₃ matters most.
+
+Analogy: K₃ doesn't change WHEN you start rolling downhill (onset), but it
+changes HOW DEEP the valley is and HOW WIDE the pass is to get there.
+
+### 8. Open questions
 2. **K₄ truncation**: Four-body term is 45-75% of K₃ effect. Is the K₃-only model self-consistent?
 3. **Large K₃ regime**: Zhang 2024's basin shrinkage might occur at K₃ > 2 (beyond our scan range).
 4. **N→∞ true limit**: Need N=1000+ to distinguish finite-size from true thermodynamic behavior.

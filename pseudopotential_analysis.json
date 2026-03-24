@@ -1,0 +1,348 @@
+{
+  "Delta": 0.798,
+  "sigma": 1.0,
+  "results": [
+    {
+      "K2": 1.4,
+      "K3": 0.0,
+      "curvature_0": 0.09800000000000009,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.4,
+      "K3": 0.5,
+      "curvature_0": 0.09800000000000009,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.4,
+      "K3": 1.0,
+      "curvature_0": 0.09800000000000009,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.4,
+      "K3": 1.5,
+      "curvature_0": 0.09800000000000009,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.4,
+      "K3": 2.0,
+      "curvature_0": 0.09800000000000009,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.4,
+      "K3": 3.0,
+      "curvature_0": 0.09800000000000009,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.5,
+      "K3": 0.0,
+      "curvature_0": 0.04800000000000004,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.5,
+      "K3": 0.5,
+      "curvature_0": 0.04800000000000004,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.5,
+      "K3": 1.0,
+      "curvature_0": 0.04800000000000004,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.5,
+      "K3": 1.5,
+      "curvature_0": 0.04800000000000004,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.5,
+      "K3": 2.0,
+      "curvature_0": 0.04800000000000004,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.5,
+      "K3": 3.0,
+      "curvature_0": 0.04800000000000004,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.596,
+      "K3": 0.0,
+      "curvature_0": 0.0,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.596,
+      "K3": 0.5,
+      "curvature_0": 0.0,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.596,
+      "K3": 1.0,
+      "curvature_0": 0.0,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.596,
+      "K3": 1.5,
+      "curvature_0": 0.0,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.596,
+      "K3": 2.0,
+      "curvature_0": 0.0,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.596,
+      "K3": 3.0,
+      "curvature_0": 0.0,
+      "fixed_points": [],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.7,
+      "K3": 0.0,
+      "curvature_0": -0.051999999999999935,
+      "fixed_points": [
+        0.24733877696033676
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.7,
+      "K3": 0.5,
+      "curvature_0": -0.051999999999999935,
+      "fixed_points": [
+        0.218613429664472
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.7,
+      "K3": 1.0,
+      "curvature_0": -0.051999999999999935,
+      "fixed_points": [
+        0.1976974696692496
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.7,
+      "K3": 1.5,
+      "curvature_0": -0.051999999999999935,
+      "fixed_points": [
+        0.18168875315560104
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.7,
+      "K3": 2.0,
+      "curvature_0": -0.051999999999999935,
+      "fixed_points": [
+        0.16896349541237202
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 1.7,
+      "K3": 3.0,
+      "curvature_0": -0.051999999999999935,
+      "fixed_points": [
+        0.14983105323044182
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.0,
+      "K3": 0.0,
+      "curvature_0": -0.20199999999999996,
+      "fixed_points": [
+        0.4494441010848846
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.0,
+      "K3": 0.5,
+      "curvature_0": -0.20199999999999996,
+      "fixed_points": [
+        0.40888939213267095
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.0,
+      "K3": 1.0,
+      "curvature_0": -0.20199999999999996,
+      "fixed_points": [
+        0.37593107620639277
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.0,
+      "K3": 1.5,
+      "curvature_0": -0.20199999999999996,
+      "fixed_points": [
+        0.3489770214595885
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.0,
+      "K3": 2.0,
+      "curvature_0": -0.20199999999999996,
+      "fixed_points": [
+        0.3266367135441272
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.0,
+      "K3": 3.0,
+      "curvature_0": -0.20199999999999996,
+      "fixed_points": [
+        0.2918053275373914
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.5,
+      "K3": 0.0,
+      "curvature_0": -0.45199999999999996,
+      "fixed_points": [
+        0.6013318551349163
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.5,
+      "K3": 0.5,
+      "curvature_0": -0.45199999999999996,
+      "fixed_points": [
+        0.5641006588385824
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.5,
+      "K3": 1.0,
+      "curvature_0": -0.45199999999999996,
+      "fixed_points": [
+        0.529921270869077
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.5,
+      "K3": 1.5,
+      "curvature_0": -0.45199999999999996,
+      "fixed_points": [
+        0.499307433729142
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.5,
+      "K3": 2.0,
+      "curvature_0": -0.45199999999999996,
+      "fixed_points": [
+        0.4722164326629138
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 2.5,
+      "K3": 3.0,
+      "curvature_0": -0.45199999999999996,
+      "fixed_points": [
+        0.4272450230717654
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 3.0,
+      "K3": 0.0,
+      "curvature_0": -0.702,
+      "fixed_points": [
+        0.6841052550594827
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 3.0,
+      "K3": 0.5,
+      "curvature_0": -0.702,
+      "fixed_points": [
+        0.6536178132611414
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 3.0,
+      "K3": 1.0,
+      "curvature_0": -0.702,
+      "fixed_points": [
+        0.6235296906404486
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 3.0,
+      "K3": 1.5,
+      "curvature_0": -0.702,
+      "fixed_points": [
+        0.5947281812117465
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 3.0,
+      "K3": 2.0,
+      "curvature_0": -0.702,
+      "fixed_points": [
+        0.5677751383157377
+      ],
+      "V_barrier": null
+    },
+    {
+      "K2": 3.0,
+      "K3": 3.0,
+      "curvature_0": -0.702,
+      "fixed_points": [
+        0.5202083225474015
+      ],
+      "V_barrier": null
+    }
+  ]
+}
