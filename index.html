@@ -232,6 +232,45 @@
     font-weight: 700;
   }
 
+  /* Figures */
+  .fig-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .fig-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .fig-item:hover { border-color: var(--accent); }
+  .fig-item img {
+    width: 100%;
+    display: block;
+  }
+  .fig-item .fig-caption {
+    padding: 12px 16px;
+    font-size: 0.85em;
+    color: #8b949e;
+  }
+  .fig-item .fig-caption strong { color: var(--text); }
+  .fig-hero {
+    margin: 24px 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .fig-hero img { width: 100%; display: block; }
+  .fig-hero .fig-caption {
+    padding: 12px 20px;
+    background: var(--card);
+    font-size: 0.9em;
+    color: #8b949e;
+  }
+
   /* Footer */
   footer {
     text-align: center;
@@ -346,6 +385,67 @@
     <div class="result-card">
       <div class="number">c = 4/&pi;&sup2;</div>
       <div class="label">Uniform (compact support)<br>Any K&#8323;&gt;0 is explosive</div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Figures -->
+<section>
+  <h2>Key Results in Figures</h2>
+
+  <div class="fig-hero">
+    <img src="paper/figures/fig1.png" alt="Phase diagram">
+    <div class="fig-caption"><strong>Fig 1. K&#8322;&times;K&#8323; Phase Diagram.</strong> Heatmap of order parameter r with OA onset line, explosive boundary, and literature study regions annotated. The single plot that unifies all four contradictory papers.</div>
+  </div>
+
+  <div class="fig-gallery">
+    <div class="fig-item">
+      <img src="paper/figures/fig2.png" alt="Hysteresis">
+      <div class="fig-caption"><strong>Fig 2.</strong> Hysteresis loops for 7 K&#8323; values. Forward/backward sweeps reveal first-order transition character.</div>
+    </div>
+    <div class="fig-item">
+      <img src="paper/figures/fig3.png" alt="K3 asymmetry">
+      <div class="fig-caption"><strong>Fig 3.</strong> K&#8323; asymmetry: r&#8321;, r&#8322;, basin probability, and time series showing positive/negative K&#8323; have fundamentally different effects.</div>
+    </div>
+    <div class="fig-item">
+      <img src="paper/figures/fig4.png" alt="Critical slowing">
+      <div class="fig-caption"><strong>Fig 4.</strong> Critical slowing down enhanced 4&times; by K&#8323;&gt;0 &mdash; the opposite of what mean-field theory predicts.</div>
+    </div>
+    <div class="fig-item">
+      <img src="paper/figures/fig5.png" alt="Sparse network">
+      <div class="fig-caption"><strong>Fig 5.</strong> K&#8323; has <em>zero</em> effect on sparse networks (p=0.1). Triangle density p&sup3; gates three-body coupling.</div>
+    </div>
+    <div class="fig-item">
+      <img src="paper/figures/fig6.png" alt="Locking threshold">
+      <div class="fig-caption"><strong>Fig 6.</strong> Locking threshold: K&#8323;&gt;0 widens locking range, K&#8323;&lt;0 causes non-classical unlocking of low-frequency oscillators.</div>
+    </div>
+    <div class="fig-item">
+      <img src="paper/figures/fig7.png" alt="Theory validation">
+      <div class="fig-caption"><strong>Fig 7.</strong> Corrected self-consistent equation vs GPU simulations: &lt;3% error for &sigma;&le;1.0 across six &sigma; values.</div>
+    </div>
+    <div class="fig-item">
+      <img src="paper/figures/fig8.png" alt="Finite size">
+      <div class="fig-caption"><strong>Fig 8.</strong> Finite-size scaling N=20 to N=20,000: K&#8323; enhancement persists and strengthens, converging to Gaussian exact prediction.</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px; color:#8b949e">Supplementary Highlights</h3>
+  <div class="fig-gallery">
+    <div class="fig-item">
+      <img src="figures/SUMMARY.png" alt="Summary">
+      <div class="fig-caption"><strong>Visual Summary</strong> of all key findings in one figure.</div>
+    </div>
+    <div class="fig-item">
+      <img src="figures/corrected_vs_numerical.png" alt="Corrected vs numerical">
+      <div class="fig-caption"><strong>Corrected vs Approximate</strong> phase diagram: c[g] correction removes phantom subcritical solutions.</div>
+    </div>
+    <div class="fig-item">
+      <img src="figures/sparse_network_K3.png" alt="Sparse network detail">
+      <div class="fig-caption"><strong>Sparse Network Detail</strong>: r vs K&#8323; at p=0.1, 0.3, 1.0. The smoking gun for topology dependence.</div>
+    </div>
+    <div class="fig-item">
+      <img src="figures/Z2_Z1_ratio.png" alt="OA closure ratio">
+      <div class="fig-caption"><strong>Z&#8322;/Z&#8321;&sup2; Ratio</strong>: deviates from OA prediction (=1) at negative K&#8323;, confirming theory breakdown.</div>
     </div>
   </div>
 </section>
