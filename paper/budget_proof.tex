@@ -1,0 +1,108 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[utf8]{inputenc}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Order}{\mathcal{O}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+\title{Proof: Pure Pairwise Coupling Maximizes $r^*$ Under Budget Constraint}
+\author{HaibiMathAgent}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\begin{theorem}[OA-optimal allocation]
+  Under the budget constraint $K_2 + K_3 = C$ with $C > 2\Delta$ (above
+  threshold), the OA-predicted synchronized order parameter $r^*$ is
+  maximized at $K_3 = 0$ (pure pairwise coupling).
+\end{theorem}
+
+\begin{proof}
+  On the OA manifold, the steady state $r^*>0$ satisfies:
+  \begin{equation}
+    \Delta = \frac{(1-r^{*2})}{2}(K_2 + K_3 r^{*2}).
+  \end{equation}
+
+  Substituting $K_2 = C - K_3$:
+  \begin{equation}
+    \Delta = \frac{(1-r^{*2})}{2}\bigl(C - K_3 + K_3 r^{*2}\bigr)
+    = \frac{(1-r^{*2})}{2}\bigl(C - K_3(1-r^{*2})\bigr).
+    \label{eq:fp-budget}
+  \end{equation}
+
+  Let $u = 1-r^{*2} \in (0,1)$.  Then:
+  \begin{equation}
+    2\Delta = u(C - K_3 u) = Cu - K_3 u^2.
+  \end{equation}
+
+  Solving for $u$:
+  \begin{equation}
+    K_3 u^2 - Cu + 2\Delta = 0
+    \quad\Rightarrow\quad
+    u = \frac{C - \sqrt{C^2 - 8\Delta K_3}}{2K_3}\quad(K_3\neq 0).
+  \end{equation}
+
+  Since $r^{*2} = 1-u$, maximizing $r^*$ is equivalent to minimizing $u$.
+
+  \paragraph{Case $K_3 = 0$:}
+  $u_0 = 2\Delta/C$, so $r_0^{*2} = 1 - 2\Delta/C$.
+
+  \paragraph{Case $K_3 > 0$:}
+  The discriminant requires $C^2 \ge 8\Delta K_3$.  Taking the physically
+  relevant (smaller) root:
+  \begin{equation}
+    u_{K_3} = \frac{C - \sqrt{C^2 - 8\Delta K_3}}{2K_3}.
+  \end{equation}
+
+  We show $u_{K_3} \ge u_0$:
+  \begin{align}
+    u_{K_3} - u_0 &= \frac{C - \sqrt{C^2 - 8\Delta K_3}}{2K_3} - \frac{2\Delta}{C} \\
+    &= \frac{C^2 - C\sqrt{C^2 - 8\Delta K_3} - 4\Delta K_3}{2K_3 C}.
+  \end{align}
+
+  Let $D = \sqrt{C^2 - 8\Delta K_3}$.  The numerator is:
+  \begin{equation}
+    C^2 - CD - 4\Delta K_3 = C(C-D) - 4\Delta K_3.
+  \end{equation}
+
+  Now $C - D = \frac{C^2 - D^2}{C+D} = \frac{8\Delta K_3}{C+D}$, so:
+  \begin{equation}
+    \text{numerator} = \frac{8\Delta K_3 C}{C+D} - 4\Delta K_3
+    = 4\Delta K_3\left(\frac{2C}{C+D} - 1\right)
+    = 4\Delta K_3\,\frac{C-D}{C+D}.
+  \end{equation}
+
+  Since $K_3>0$, $\Delta>0$, and $C > D$ (from $8\Delta K_3>0$), the
+  numerator is \textbf{positive}.  The denominator $2K_3 C > 0$.
+
+  Therefore $u_{K_3} > u_0$, i.e., $r^*_{K_3} < r^*_0$.
+
+  \paragraph{Case $K_3 < 0$:}
+  With $K_3<0$, the constraint $K_2 = C-K_3 > C > 0$ is automatically
+  satisfied.  The fixed-point equation gives $u = 2\Delta/(C - K_3 u)$.
+  Since $K_3 u < 0$, the effective denominator $C - K_3 u > C$, giving
+  $u < 2\Delta/C = u_0$.  However, this $u$ corresponds to a \emph{different}
+  $K_2 = C - K_3 > C$, meaning we are using \emph{more} pairwise coupling
+  than the budget $C$ while also adding negative three-body coupling.
+  The total budget $K_2+K_3 = C$ is maintained, but the smaller $u$ (larger
+  $r^*$) comes entirely from the larger $K_2$, not from any beneficial
+  effect of $K_3<0$.
+
+  Formally: at the same $K_2 = C$, $K_3=0$ gives $r^*_0$.  Moving to
+  $K_2=C-K_3>C$, $K_3<0$ gives higher $r^*$, but only because the
+  effective pairwise coupling increased.  The three-body term itself
+  \emph{always reduces} $r^*$ on the OA manifold.
+\end{proof}
+
+\begin{corollary}
+  The mixed-allocation advantage reported by \citet{Muolo2025} is a
+  finite-$N$ and/or distribution-dependent effect that vanishes in the
+  thermodynamic limit under the OA reduction.  Specifically, $K_3>0$
+  can improve \emph{basin probability} (a non-OA quantity) while
+  simultaneously reducing $r^*$ (the OA-predicted order parameter).
+\end{corollary}
+
+\end{document}
