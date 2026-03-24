@@ -551,6 +551,31 @@ The re-entrant region (\Cref{sec:reentrant}) is a genuinely new prediction that
 has not been reported in the literature and can be tested experimentally in
 coupled electrochemical oscillators or Josephson junction arrays.
 
+\subsection{Connection to time-delayed systems}
+
+Our framework also illuminates the recently discovered equivalence between
+time-delayed and higher-order coupling~\citep{Muolo2025delay}.  A Taylor
+expansion of the delayed Kuramoto model to $\Order(\tau)$ yields effective
+parameters (see Appendix~\ref{app:time-delay} for the full derivation):
+\begin{equation}
+  K_2^{\mathrm{eff}} = K_2 - \frac{K_2^2\tau}{2},\qquad
+  K_3^{\mathrm{eff}} = \frac{K_2^2\tau}{4}.
+  \label{eq:delay-mapping}
+\end{equation}
+
+Three important consequences follow:
+\begin{enumerate}
+  \item $K_3^{\mathrm{eff}}\ge 0$ always: time delay can only induce
+    \emph{positive} three-body coupling.  The $K_3<0$ half of our phase diagram
+    is inaccessible to purely delayed systems.
+  \item The physically reachable region in the $(K_2^{\mathrm{eff}},
+    K_3^{\mathrm{eff}})$ plane is a triangle bounded by $K_3=0$ and
+    $K_3=(K_2-K_2^{\mathrm{eff}})/2$.
+  \item The explosive synchronization line $K_3=K_2$ (\Cref{thm:explosive})
+    lies outside this triangle, explaining why explosive transitions are
+    \emph{not} typically observed in time-delayed Kuramoto systems.
+\end{enumerate}
+
 
 %% ============================================================
 \section{Related Work}
@@ -584,8 +609,13 @@ are:
   \item The first complete Ott--Antonsen reduction for the three-body Kuramoto
     model, yielding a scalar ODE \eqref{eq:r-dynamics} for the order parameter.
   \item Three analytically derived critical manifolds that reconcile the four
-    major contradictory studies.
+    major contradictory studies (2020--2025).
   \item Discovery of a re-entrant synchronization region.
+  \item A $\sigma$-scaling law (\Cref{prop:sigma-scaling}) showing phase
+    boundaries are self-similar, answering the open question of
+    \citet{Muolo2025}.
+  \item Explicit mapping $K_3^{\mathrm{eff}}=K_2^2\tau/4$ from time-delayed
+    to higher-order models, delineating the physically reachable region.
   \item Quantitative validation via $>10^5$ GPU-accelerated simulations.
 \end{enumerate}
 
@@ -670,6 +700,27 @@ With $z=r\ee^{\ii\phi}$ and extracting the radial part:
   &= -\Delta r + \frac{r(1-r^2)}{2}(K_2+K_3 r^2),
 \end{align}
 confirming \eqref{eq:r-dynamics}.  \qed
+
+
+\section{Time-Delay Equivalence}
+\label{app:time-delay}
+
+The full derivation of the time-delay to higher-order mapping is provided in
+the supplementary file \texttt{time\_delay\_equivalence.tex}.  Here we state
+the key result.
+
+Starting from the delayed Kuramoto model
+$\dot{\theta}_i = \omega_i + \frac{K_2}{N}\sum_j\sin(\theta_j(t-\tau)-\theta_i(t))$,
+a Taylor expansion to $\Order(\tau)$ followed by trigonometric product-to-sum
+identities yields:
+\begin{align}
+  K_2^{\mathrm{eff}} &= K_2 - \frac{K_2^2\tau}{2}, \\
+  K_3^{\mathrm{eff}} &= \frac{K_2^2\tau}{4}.
+\end{align}
+
+The physically reachable region satisfies
+$K_3^{\mathrm{eff}} = (K_2-K_2^{\mathrm{eff}})/2$ with $K_3^{\mathrm{eff}}\ge 0$,
+forming a triangle in the $(K_2^{\mathrm{eff}}, K_3^{\mathrm{eff}})$ plane.
 
 
 \end{document}
