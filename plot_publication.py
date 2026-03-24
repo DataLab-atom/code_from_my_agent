@@ -48,8 +48,11 @@ FIG_DIR = "figures"
 
 # ─── Ott-Antonsen 解析工具（来自 MathAgent 推导） ───
 def oa_delta_gaussian(sigma):
-    """Gaussian 频率分布的等效半宽 Δ ≈ σ√(π/2)"""
-    return sigma * np.sqrt(np.pi / 2)
+    """Gaussian 频率分布的等效半宽 Δ = σ√(2π)/π ≈ 0.798σ
+    来自 g(0)匹配: Δ = 1/(π·g(0)), g(0) = 1/(σ√(2π))
+    => Δ = σ√(2π)/π  (MathAgent commit df5281f 修正)
+    """
+    return sigma * np.sqrt(2 * np.pi) / np.pi
 
 
 def oa_Kc_onset(sigma):
