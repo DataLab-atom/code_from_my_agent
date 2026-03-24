@@ -19,6 +19,8 @@
 
 **Rule: K₃>0 helps synchronization. Period. Near Kc the effect is amplified but noisy.**
 
+Strongest evidence: K₃>0 **creates** sync where none existed (basin 0→>0) in 44% of sub-critical points, and **never destroys** existing sync (0/37 cases). This is the definitive test.
+
 ---
 
 ## Detailed Answer
