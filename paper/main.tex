@@ -269,9 +269,21 @@ parameter $r$, making the complete bifurcation analysis tractable.
   Matching $g_{\mathrm{Lor}}(0) = g_{\mathrm{Gauss}}(0)$ gives
   $\Delta = \sigma\sqrt{2\pi}/\pi \approx 0.798\,\sigma$.
   With this identification, the onset prediction $\Kc=2\Delta$ is exact for
-  both distributions.  Higher-order (nonlinear) predictions from
-  \eqref{eq:r-dynamics} are exact for the Lorentzian and approximate for the
-  Gaussian~\citep{OttAntonsen2008}.
+  both distributions.
+
+  \textbf{Important caveat}: while the onset $\Kc$ is distribution-independent
+  (depending only on $g(0)$), the nonlinear predictions from
+  \eqref{eq:r-dynamics}---including $r^*$, basin boundaries, and re-entrant
+  loci---are exact only for the Lorentzian.  For the Gaussian, the OA
+  prediction \emph{systematically underestimates} the synchronized order
+  parameter $r^*$ by $0.10$--$0.27$ in the supercritical regime (see
+  \texttt{gaussian\_selfconsistent.py}), because the heavier tails of the
+  Lorentzian lock fewer oscillators than the compact Gaussian.  Nevertheless,
+  the \emph{qualitative} structure of the phase diagram---including the
+  existence and topology of the onset, explosive, basin, and re-entrant
+  boundaries---is robust across distributions, and our analytical predictions
+  provide correct scaling relations even when the quantitative $r^*$ values
+  require Gaussian corrections~\citep{OttAntonsen2008}.
 \end{remark}
 
 
