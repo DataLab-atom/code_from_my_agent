@@ -1,0 +1,54 @@
+{
+  "bistability": {
+    "N": 200,
+    "K2": 1.0,
+    "K3": 3.0,
+    "sigma": 1.0,
+    "n_seeds": 50,
+    "n_high_r": 4,
+    "n_low_r": 44,
+    "n_mid": 2,
+    "r_mean": 0.1958,
+    "r_std": 0.2006,
+    "bistable": false,
+    "note": "4/50 seeds reach high state - rare but exists"
+  },
+  "sigma_scaling": {
+    "note": "r(K3=0) perfectly scales (~0.859 for all sigma at K2/Kc=1.5)",
+    "delta_r_decreases": "K3 effect weakens with sigma: 0.110(0.5) to 0.072(1.2)",
+    "data": [
+      {
+        "sigma": 0.5,
+        "Kc": 0.798,
+        "K2": 1.197,
+        "r_K3_0": 0.859,
+        "r_K3_1": 0.969,
+        "delta_r": 0.11
+      },
+      {
+        "sigma": 0.8,
+        "Kc": 1.277,
+        "K2": 1.915,
+        "r_K3_0": 0.859,
+        "r_K3_1": 0.95,
+        "delta_r": 0.091
+      },
+      {
+        "sigma": 1.0,
+        "Kc": 1.596,
+        "K2": 2.394,
+        "r_K3_0": 0.859,
+        "r_K3_1": 0.94,
+        "delta_r": 0.08
+      },
+      {
+        "sigma": 1.2,
+        "Kc": 1.915,
+        "K2": 2.872,
+        "r_K3_0": 0.859,
+        "r_K3_1": 0.931,
+        "delta_r": 0.072
+      }
+    ]
+  }
+}

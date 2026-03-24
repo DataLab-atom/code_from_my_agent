@@ -114,7 +114,14 @@ changes HOW DEEP the valley is and HOW WIDE the pass is to get there.
 3. **K₄ truncation**: Four-body term is 45-75% of K₃. Our model ignores it. Conclusions may change with K₄.
 4. **Only Gaussian/Lorentzian/Uniform tested**: Other distributions (bimodal, power-law) untested.
 
-### 9. Open questions
+### 9. sigma scaling partially fails (latest finding)
+
+r(K3=0) at fixed K2/Kc scales perfectly across sigma (~0.859).
+But delta_r(K3=+1) does NOT scale: decreases from 0.110 (σ=0.5) to 0.072 (σ=1.2).
+K₃ effect weakens with frequency spread — wider ω distribution → less benefit from K₃.
+MathAgent's σ-scaling proposition (all boundaries are rays in K2/σ, K3/σ plane) is only approximate.
+
+### 10. Open questions
 2. **K₄ truncation**: Four-body term is 45-75% of K₃ effect. Is the K₃-only model self-consistent?
 3. **Large K₃ regime**: Zhang 2024's basin shrinkage might occur at K₃ > 2 (beyond our scan range).
 4. **N→∞ true limit**: Need N=1000+ to distinguish finite-size from true thermodynamic behavior.
