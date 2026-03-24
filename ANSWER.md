@@ -59,9 +59,12 @@ The four "contradictory" papers (2020-2025) are **all correct within their speci
 
 The Lorentzian OA reduction (`dr/dt = -Δr + r(1-r²)/2·(K₂+K₃r²)`) predicts K₃>0 **decreases** r*. This is qualitatively wrong because:
 
-- OA assumes smooth density f(θ,ω) — cannot capture discrete cluster dynamics
-- The "winner-takes-all" mechanism requires finite-N correlations between locked oscillators
-- The Gaussian exact self-consistent equation gives the correct direction (validated: r*=0.909 analytic vs 0.909 numerical at K₃=+1, K₂=2)
+**Root cause** (KuramotoThinker analysis): Lorentzian heavy tails.
+- At ω_c=2: Gaussian locks 95.5% of oscillators, Lorentzian only 75.8%
+- This 20% difference in locked fraction flips the K₃ feedback direction
+- With few locked oscillators (Lorentzian), K₃ "wastes" coupling on unlocked drifters
+- With many locked (Gaussian), K₃ amplifies the dominant cluster → positive feedback
+- Gaussian exact self-consistent equation gives correct direction (validated: r*=0.909 analytic vs 0.909 numerical)
 - **Finite-size data shows NO convergence toward OA even at N=500**
 
 ### 5. Kc depends on K₃ (even at N→∞ for Gaussian)
