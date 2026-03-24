@@ -7,7 +7,9 @@ HaibiPlotAnalyst (agent-mn4l6mgq)
 2. σ 效应曲线 — 固定 K₂ 下 r vs K₃
 3. 临界耦合偏移 — Kc vs σ（不同 K₃）
 4. 三指标联合面板 — r / basin / convergence time
-5. 相边界叠加解析预测（预留接口）
+5. Basin vs Stability 散点图（"坑口窄但坑底深"）
+6. K₃ 正负不对称性分析（KuramotoThinker 建议）
+7. 解析-数值对比图（叠加 Ott-Antonsen 预测，对接 MathAgent）
 """
 
 import json
@@ -358,6 +360,136 @@ def fig5_basin_vs_stability(d, save=True):
 
 
 # ═══════════════════════════════════════════════════════════
+# Fig 6: K₃ 正负不对称性分析（KuramotoThinker 建议）
+# ═══════════════════════════════════════════════════════════
+def fig6_asymmetry(d, save=True):
+    """
+    对每个 σ，计算 Δr(K₃) = r(+|K₃|) - r(-|K₃|) 的不对称性
+    揭示正负 K₃ 对同步的不同效应
+    """
+    _ensure_dir()
+    sigma, K2, K3, r = d["sigma"], d["K2"], d["K3"], d["r"]
+
+    # 构建正负 K₃ 对
+    k3_pos_mask = K3 > 0
+    k3_neg = K3[K3 < 0]
+    k3_pos = K3[k3_pos_mask]
+    n_pairs = min(len(k3_neg), len(k3_pos))
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), gridspec_kw={"wspace": 0.3})
+
+    # Panel A: 不对称性热力图（固定中间 σ）
+    ax = axes[0]
+    si = len(sigma) // 2
+    sig = sigma[si]
+
+    # Δr = r(K₃>0) - r(K₃<0) for matched |K₃|
+    asym = np.zeros((len(K2), n_pairs))
+    k3_vals = []
+    for p in range(n_pairs):
+        pi = len(K3) - 1 - p  # positive side from right
+        ni = p               # negative side from left
+        if abs(abs(K3[pi]) - abs(K3[ni])) < 0.01:
+            asym[:, p] = r[si, :, pi] - r[si, :, ni]
+            k3_vals.append(abs(K3[pi]))
+
+    if k3_vals:
+        k3v = np.array(k3_vals)
+        K3ag, K2ag = np.meshgrid(k3v, K2)
+        vmax = max(abs(asym.min()), abs(asym.max()), 0.01)
+        im = ax.pcolormesh(K3ag, K2ag, asym, cmap="RdBu_r",
+                           vmin=-vmax, vmax=vmax, shading="auto", rasterized=True)
+        ax.contour(K3ag, K2ag, asym, levels=[0], colors=["k"], linewidths=[1.2])
+        fig.colorbar(im, ax=ax, label="$\\Delta r = r(+K_3) - r(-K_3)$", shrink=0.9)
+    ax.set_xlabel("$|K_3|$")
+    ax.set_ylabel("$K_2$")
+    ax.set_title(f"$K_3$ asymmetry ($\\sigma={sig:.1f}$)")
+    _add_panel_label(ax, "A")
+
+    # Panel B: 各 σ 下的平均不对称性曲线
+    ax2 = axes[1]
+    colors = plt.cm.plasma(np.linspace(0.15, 0.85, len(sigma)))
+    for si2, (sig2, c) in enumerate(zip(sigma, colors)):
+        mean_asym = []
+        for p in range(n_pairs):
+            pi = len(K3) - 1 - p
+            ni = p
+            if abs(abs(K3[pi]) - abs(K3[ni])) < 0.01:
+                mean_asym.append(np.mean(r[si2, :, pi] - r[si2, :, ni]))
+        if mean_asym and k3_vals:
+            ax2.plot(k3_vals[:len(mean_asym)], mean_asym, color=c, lw=1.8,
+                     marker="o", ms=4, label=f"$\\sigma={sig2:.1f}$")
+
+    ax2.axhline(0, color="gray", ls="--", lw=0.6)
+    ax2.set_xlabel("$|K_3|$")
+    ax2.set_ylabel("Mean $\\Delta r$")
+    ax2.set_title("Average $K_3$ asymmetry across $K_2$")
+    ax2.legend(fontsize=8, framealpha=0.9)
+    ax2.grid(True, alpha=0.15)
+    _add_panel_label(ax2, "B")
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig6_asymmetry.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
+# Fig 7: 解析-数值对比（对接 MathAgent Ott-Antonsen 结果）
+# ═══════════════════════════════════════════════════════════
+def fig7_analytic_vs_numeric(d, analytic_Kc_func=None, save=True):
+    """
+    将 Ott-Antonsen 解析临界曲线叠加到数值相图上
+    analytic_Kc_func: callable(K3, sigma) -> Kc 解析值
+                      如果 None 则用经典公式 Kc=2√(2π)σ 作为 baseline
+    """
+    _ensure_dir()
+    sigma, K2, K3, r = d["sigma"], d["K2"], d["K3"], d["r"]
+
+    nS = len(sigma)
+    fig, axes = plt.subplots(1, nS, figsize=(3.5 * nS, 4),
+                              sharey=True, gridspec_kw={"wspace": 0.08})
+    if nS == 1:
+        axes = [axes]
+
+    K3g, K2g = np.meshgrid(K3, K2)
+
+    for i, (ax, sig) in enumerate(zip(axes, sigma)):
+        ax.pcolormesh(K3g, K2g, r[i], cmap=CMAP_R, vmin=0, vmax=1,
+                      shading="auto", rasterized=True)
+        ax.contour(K3g, K2g, r[i], levels=[0.5],
+                   colors=["white"], linewidths=[1.5], linestyles=["-"])
+
+        # 解析曲线
+        k3_fine = np.linspace(K3.min(), K3.max(), 200)
+        if analytic_Kc_func is not None:
+            Kc_analytic = [analytic_Kc_func(k, sig) for k in k3_fine]
+        else:
+            # baseline: 经典 Kc 不依赖 K₃
+            Kc_analytic = [2.0 * np.sqrt(2 * np.pi) * sig] * len(k3_fine)
+
+        ax.plot(k3_fine, Kc_analytic, "w--", lw=2, label="Ott-Antonsen")
+        ax.set_xlabel("$K_3$")
+        ax.set_title(f"$\\sigma={sig:.1f}$")
+        if i == 0:
+            ax.set_ylabel("$K_2$")
+            ax.legend(loc="lower right", fontsize=8)
+        _add_panel_label(ax, chr(65 + i))
+
+    fig.suptitle("Analytic (Ott-Antonsen) vs. Numerical phase boundary",
+                 fontsize=13, y=1.02)
+
+    if save:
+        path = os.path.join(FIG_DIR, "fig7_analytic_vs_numeric.pdf")
+        fig.savefig(path)
+        fig.savefig(path.replace(".pdf", ".png"))
+        print(f"Saved: {path}")
+    return fig
+
+
+# ═══════════════════════════════════════════════════════════
 # 主入口
 # ═══════════════════════════════════════════════════════════
 def generate_all(data_path="scan_sigma_K2_K3.json"):
@@ -370,6 +502,8 @@ def generate_all(data_path="scan_sigma_K2_K3.json"):
     fig3_Kc_shift(d)
     fig4_triple_metric(d)
     fig5_basin_vs_stability(d)
+    fig6_asymmetry(d)
+    fig7_analytic_vs_numeric(d)
 
     print(f"\nAll figures saved to {FIG_DIR}/")
 
