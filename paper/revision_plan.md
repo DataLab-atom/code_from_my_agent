@@ -1,51 +1,73 @@
 # Paper Revision Plan: Distribution-Dependent Phase Topology
+## Updated 2026-03-25 after OA closure ratio discovery
 
-## Core Insight (NEW)
+## Core Insight
 
-The frequency distribution's **tail behavior** qualitatively changes the phase diagram topology:
-- Lorentzian (heavy tails): explosive boundary at K₃=K₂, re-entrant requires K₃>>K₂
-- Gaussian (light tails): explosive-like jumps appear at K₃<<K₂, re-entrant at K₃/K₂≈1-3.5
+The frequency distribution controls synchronization through **two channels**:
+1. **Local** (g(0), g''(0)): onset threshold Kc and curvature
+2. **Global** (tail decay integral): OA closure ratio c[g] = Z₂/Z₁²
 
-This means: **the same coupling parameters produce different synchronization behavior
-depending on population heterogeneity** — a fundamental result with direct experimental implications.
+This means the same (K₂,K₃) parameters produce **quantitatively different**
+phase diagrams depending on distribution shape, not just qualitatively different.
 
-## Evidence
+## Key New Results (this session)
 
-1. OA (Lorentzian): max jump at K₃=0 is 0 (continuous onset). Explosive at K₃=K₂.
-2. Gaussian exact: max jump at K₃=0 is 0.26, at K₃=1.0 is 0.84 (already explosive-like).
-3. Re-entrant: confirmed for Gaussian at K₂=2, K₃≈5.4; not reachable in OA at same params.
+### 1. OA Closure Ratio c[g]
+- Z₂ ≠ Z₁² for non-Lorentzian distributions
+- c[g] = (2/(π²g₀²)) ∫(g₀-g(ω))/ω² dω (general closed form)
+- Gaussian: c = 2/π (analytically proved)
+- Lorentzian: c = 1 (analytically proved)
+- Student-t(ν): c(ν) = (ν/π)[Γ(ν/2)/Γ((ν+1)/2)]² (closed form)
+- Code: z2_z1_ratio_v2.py, general_c_formula.py, student_t_c_formula.py
 
-## Revised Paper Structure
+### 2. Corrected Explosive Formula
+- K₃^exp = Kc³|g''(0)|/(8c[g]g(0))
+- Gaussian: K₃^exp/Kc = 1/2 (was 1/π ≈ 0.318, 57% error)
+- Verified: corrected equation shows explosive at K₃=0.80 ✓
+- Code: verify_explosive_boundary.py
 
-### New Title Candidate
-"Tail Matters: How Frequency Distribution Shape Controls Higher-Order Synchronization Phase Topology"
+### 3. Phantom Subcritical Solutions
+- Z₂=r² approximation creates synchronized states that don't exist
+- At K₂=1.0, K₃=2.0: approximate says r=0.875, corrected says r=0
+- Saddle-node boundary: corrected bistable region is smaller by 0.1-0.4 in K₂
+- Code: debug_disagreement.py, saddle_node_boundary.py
 
-### Revised Contributions
-1. OA reduction → qualitative framework (unchanged)
-2. **NEW**: Gaussian self-consistent equation reveals distribution-dependent phase topology
-3. **STRENGTHENED**: Re-entrant synchronization confirmed in Gaussian (not just predicted)
-4. Reconciliation of contradictory studies (unchanged, but now deeper: studies used different distributions too!)
-5. Time-delay mapping (unchanged)
+### 4. Time-Delay Distribution Dependence
+- Delay-induced explosive needs K₂ > 2K₃^exp
+- Lorentzian: K₂ > 2Kc (rare — needs double onset)
+- Gaussian: K₂ > Kc (generic — any supercritical coupling)
+- Updated in main.tex Section 5.2
 
-### Key Figure (NEW: should be Fig 1)
-Side-by-side phase diagrams: OA(Lorentzian) vs Gaussian exact
-- Same K₂×K₃ axes
-- Show how explosive boundary shifts
-- Show re-entrant region appearing in Gaussian but not in OA
-- This ONE figure tells the entire story
+### 5. DEBUNKED: Re-entrant Synchronization
+- Was caused by code bug (r_max=0.99 too small)
+- Corrected: r* monotonically increases with K₃, never drops to 0
+- IVT argument: indestructibility holds for all distributions
 
-### Sections to Rewrite
-- Abstract: add distribution-dependence as main contribution
-- Intro: frame as "distribution shape matters, not just coupling"
-- Section 3: add Gaussian self-consistent analysis after OA
-- Section 4: re-entrant experiment should show POSITIVE results now
-- Discussion: elevate distribution-dependence to main insight
-- Conclusion: reorder contributions
+## What's Already Updated in main.tex
+- [x] Abstract: corrected formula with c[g]
+- [x] Theorem 1: added c[g] with closed-form integral + proof
+- [x] Remark (OA caveat): explains Z₂/Z₁²=2/π for Gaussian
+- [x] Time-delay section: distribution-dependent explosive condition
+- [x] Limitations: added c[g] finite-r caveat
+- [x] Conclusion: updated formula reference
 
-## Action Items
-- [ ] Wait for KuramotoThinker feedback on direction
-- [ ] Wait for GPU extended K₃ scan to validate re-entrant numerically
-- [ ] Wait for PlotAnalyst re-entrant figure
-- [ ] Rewrite abstract and intro
-- [ ] Add Gaussian self-consistent section
-- [ ] Update experiments with new results
+## What Still Needs Updating
+- [ ] Add Proposition: c[g] general formula with Student-t example
+- [ ] Add figure: corrected vs approximate phase diagram (side by side)
+- [ ] Add figure: c(r) curve showing 2/π → 1 transition
+- [ ] Experiment section: add corrected predictions for GPU validation
+- [ ] Discussion: emphasize phantom solutions and smaller bistable region
+
+## Awaiting Team Input
+- [ ] KuramotoThinker: narrative direction, theorem ordering
+- [ ] GPU-Claude: numerical validation of K₂=1.0,K₃=2.0 (r≈0 or r≈0.87?)
+- [ ] PlotAnalyst: corrected phase diagram visualization
+
+## Summary of Complete Synchronization Conditions
+
+1. **Onset**: K₂ > Kc = 2/(πg(0)) — universal, K₃-independent
+2. **Explosive threshold**: K₃ > Kc³|g''(0)|/(8c[g]g(0)) — distribution-dependent
+3. **Indestructibility**: K₂>Kc ⟹ ∃ r*>0 for all K₃ — universal
+4. **Self-organized criticality**: K₃→-∞ ⟹ K_eff(r*)→Kc — universal
+5. **Bistable region**: saddle-node boundary at K₂_min(K₃), corrected smaller than approximate
+6. **Time delay**: Gaussian generic explosive, Lorentzian rare explosive
