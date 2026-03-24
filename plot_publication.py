@@ -319,7 +319,7 @@ def fig3_Kc_shift(d, r_thresh=0.3, save=True):
 
     # 理论值
     sig_fine = np.linspace(sigma.min(), sigma.max(), 100)
-    Kc_th = 2.0 * np.sqrt(2 * np.pi) * sig_fine
+    Kc_th = 2.0 * sig_fine * np.sqrt(2 * np.pi) / np.pi  # corrected: Δ=σ√(2π)/π
     ax.plot(sig_fine, Kc_th, "k--", lw=2, label="Theory ($K_3=0$)", zorder=10)
 
     markers = ["o", "s", "D", "^", "v"]
